@@ -1,0 +1,27 @@
+ on: [push]
+ jobs:
+   build-and-deploy-to-repository:
+      runs-on: ubuntu-latest
+      name: Deploy Assets
+      steps:
+        - name: Checkout the commit
+          uses: actions/checkout@v2
+
+        - name: Set up Node
+          uses: dcodeIO/setup-node-nvm@master
+          with:
+            node-version: lts/*
+
+        - name: Install deps and build
+          run: npm install; npm run build
+
+        - name: Deploy
+          uses: manzoorwanijk/action-deploy-to-repo@master
+          with:
+            src_dir: build
+            target_owner: nobourge
+            target_repo: project-default-template
+            target_dir: src/assets
+            target_branch: master # default
+            # Optional
+            access_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
