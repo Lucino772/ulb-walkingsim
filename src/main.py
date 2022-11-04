@@ -11,15 +11,13 @@ Description:
     and launches the visualiser.
 """
 
-import pychrono.core as chrono
-import visualiser
+from environment import Environment
+from visualiser import SimVisualiser
 
 
 def main():
-    # Non-smooth mechanics physics system
-    sys = chrono.ChSystemNSC()
-    # Simulation
-    visuals = visualiser.SimVisualiser(sys)
+    environment = Environment()
+    visuals = SimVisualiser(environment)
     visuals.run()
 
 
