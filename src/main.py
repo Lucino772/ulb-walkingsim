@@ -12,12 +12,12 @@ Description:
 """
 
 from environment import Environment
-from visualiser import SimVisualiser
+from visualiser import Visualiser
 
 
 def main():
     environment = Environment()
-    visuals = SimVisualiser(environment)
+    visuals = Visualiser(environment)
     visuals.run()
 
 

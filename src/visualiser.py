@@ -13,7 +13,7 @@ import pychrono.core as chrono
 import pychrono.irrlicht as chronoirr
 
 
-class SimVisualiser(chronoirr.ChVisualSystemIrrlicht):
+class Visualiser(chronoirr.ChVisualSystemIrrlicht):
     """
     Represents an instance of a visualiser for a given
     system/simulation.
