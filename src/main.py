@@ -12,7 +12,7 @@ Description:
 """
 
 import pychrono.core as chrono
-import pychrono.irrlicht as chronoirr
+import visualiser
 
 
 def main():
@@ -40,23 +40,9 @@ def main():
         boxground, chrono.ChFrameD(chrono.ChVectorD(0, -1, 0), chrono.QUNIT)
     )
 
-    # Visualisation
-    vis = chronoirr.ChVisualSystemIrrlicht()
-    vis.AttachSystem(sys)
-    vis.SetWindowSize(1024, 768)
-    vis.SetWindowTitle("3D muscle-based walking sim")
-    vis.Initialize()
-    vis.AddSkyBox()
-    vis.AddCamera(chrono.ChVectorD(0, 8, 12))
-    vis.AddTypicalLights()
-
     # Simulation
-    while vis.Run():
-        vis.BeginScene()
-        vis.Render()
-        vis.EndScene()
-        sys.DoStepDynamics(1e-3)
-        sys.GetCollisionSystem().Visualize(chrono.ChCollisionSystem.VIS_Shapes)
+    visuals = visualiser.SimVisualiser(sys)
+    visuals.run()
 
 
 if __name__ == "__main__":
