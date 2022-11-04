@@ -1,14 +1,13 @@
 """
 3D PyChrono muscle-based walking simulator
-File: main.py
+File: visualiser.py
 Authors:
     BECKER Robin-Gilles
     BOURGEOIS Noé
     HENRY DE FRAHAN Antoine
     PALMISANO Luca
 Description:
-    Program entry point. Builds the physics system
-    and launches the visualiser.
+    Class for the simulation visualisation.
 """
 import pychrono.core as chrono
 import pychrono.irrlicht as chronoirr
@@ -22,8 +21,8 @@ class SimVisualiser(chronoirr.ChVisualSystemIrrlicht):
 
     def __init__(self, sys):
         super().__init__()
-        self.sys = sys
-        self.AttachSystem(self.sys)
+        self._sys = sys
+        self.AttachSystem(self._sys)
         self.SetWindowSize(1024, 768)
         self.SetWindowTitle("3D muscle-based walking sim")
         self.Initialize()
@@ -40,5 +39,7 @@ class SimVisualiser(chronoirr.ChVisualSystemIrrlicht):
             self.BeginScene()
             self.Render()
             self.EndScene()
-            self.sys.DoStepDynamics(1e-3)
-            self.sys.GetCollisionSystem().Visualize(chrono.ChCollisionSystem.VIS_Shapes)
+            self._sys.DoStepDynamics(1e-3)
+            self._sys.GetCollisionSystem().Visualize(
+                chrono.ChCollisionSystem.VIS_Shapes
+            )
