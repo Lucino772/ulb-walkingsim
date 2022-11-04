@@ -1,5 +1,5 @@
 """
-3D PyChrono Muscle-based walking simulator
+3D PyChrono muscle-based walking simulator
 File: main.py
 Authors:
     BECKER Robin-Gilles
