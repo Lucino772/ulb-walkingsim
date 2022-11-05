@@ -14,6 +14,11 @@ import pychrono.core as chrono
 
 
 class Ground(chrono.ChBody):
+    """
+    Represents an instance of the ground, the base rigid body
+    where creatures can walk on.
+    """
+
     def __init__(self):
         super().__init__()
         self.SetBodyFixed(True)
