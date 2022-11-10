@@ -17,7 +17,8 @@ from visualiser import Visualiser
 
 def main():
     environment = Environment()
-    visuals = Visualiser(environment)
+    visuals = Visualiser(environment
+                         )
     visuals.run()
 
 
