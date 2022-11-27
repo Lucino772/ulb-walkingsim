@@ -1,0 +1,12 @@
+name: infof308-chrono
+channels:
+  - https://conda.anaconda.org/intel
+  - https://conda.anaconda.org/conda-forge
+  - https://conda.anaconda.org/projectchrono
+  - defaults
+dependencies:
+  - python=3.9
+  - numpy=1.23.*
+  - irrlicht=1.8.*
+  - pythonocc-core=7.4.*
+  - pychrono=7.0.0
