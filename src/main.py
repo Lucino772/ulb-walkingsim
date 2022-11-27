@@ -10,12 +10,20 @@ Description:
     Program entry point. Builds the physics system
     and launches the visualiser.
 """
+import sys
+
+import pychrono
+from pychrono import *
 
 from environment import Environment
 from visualiser import Visualiser
 
 
 def main():
+    print("api version : ", sys.api_version)
+    # print chrono version
+    # print(pychrono.version)
+
     environment = Environment()
     visuals = Visualiser(environment
                          )

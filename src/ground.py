@@ -28,8 +28,13 @@ class Ground(chrono.ChBody):
     def _set_collision_shape(self):
         self.GetCollisionModel().ClearModel()
         ground_material = chrono.ChMaterialSurfaceNSC()
-        self.GetCollisionModel().AddBox(
-            ground_material, 10, 0.5, 10, chrono.ChVectorD(0, -1, 0)
+        self.GetCollisionModel().AddBox(ground_material
+                                        , 10
+                                        , 0.5
+                                        , 10
+                                        , chrono.ChVectorD(0
+                                                           , -1
+                                                           , 0)
         )
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)

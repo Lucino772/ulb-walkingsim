@@ -31,13 +31,26 @@ class Sphere(chrono.ChBody):
         self.GetCollisionModel().ClearModel()
         ground_material = chrono.ChMaterialSurfaceNSC()
 
+        # self.GetCollisionModel().AddBox(ground_material
+        #                                 , 1
+        #                                 # , 0.5
+        #                                 , 1
+        #                                 , 1
+        #                                 , chrono.ChVectorD(0
+        #                                                    , -1
+        #                                                    , 0)
+        # )
+
         # add a sphere
         self.GetCollisionModel().AddSphere(ground_material
                                            , 0.5
                                            , chrono.ChVectorD(0
-                                                              , 100
-                                                              , 111110)
+                                                              , 0
+                                                              , 0)
                                            )
+        #
+
+
         # self.GetCollisionModel().AddBox(ground_material
         #                                 , 10
         #                                 , 0.5
@@ -49,6 +62,7 @@ class Sphere(chrono.ChBody):
         #                                 )
 
         self.GetCollisionModel().BuildModel()
+        #
         self.SetCollide(True)
 
     # set sphere shape
@@ -62,7 +76,7 @@ class Sphere(chrono.ChBody):
 
         self.AddVisualShape(sphereground
                             , chrono.ChFrameD(chrono.ChVectorD(0
-                                                               , 0
+                                                               , 10
                                                                , 0)
                                               , chrono.QUNIT)
         )

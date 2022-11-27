@@ -52,5 +52,8 @@ class Environment(chrono.ChSystemNSC):
         # self.Get_bodylist()[1].SetNoGravity()
 
 
-        self.Set_G_acc(chrono.ChVectorD(0, 0, 0))
-        self.Set_G_acc(chrono.ChVectorD(0, 0, -9.81))
+        # self.Set_G_acc(chrono.ChVectorD(0, 0, 0))
+        self.Set_G_acc(chrono.ChVectorD(0
+                                        , -9.81
+                                        , 0))
+        # self.Set_G_acc(chrono.ChVectorD(0, 0, -9.81))
