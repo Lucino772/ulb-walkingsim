@@ -28,22 +28,9 @@ class Body(chrono.ChBody):
         self.GetCollisionModel().ClearModel()
         ground_material = chrono.ChMaterialSurfaceNSC()
 
-        # add a sphere
-        self.GetCollisionModel().AddSphere(ground_material
-                                           , 0.5
-                                           , chrono.ChVectorD(0
-                                                              , 0
-                                                              , 0)
+        self.GetCollisionModel().AddBox(
+            ground_material, 10, 0.5, 10, chrono.ChVectorD(0, -1, 0)
         )
-        # self.GetCollisionModel().AddBox(ground_material
-        #                                 , 10
-        #                                 , 0.5
-        #                                 , 10
-        #                                 , chrono.ChVectorD(0
-        #                                                    , -1
-        #                                                    , 0
-        #                                                    )
-        #                                 )
 
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)
@@ -53,6 +40,5 @@ class Body(chrono.ChBody):
         boxground.GetBoxGeometry().Size = chrono.ChVectorD(10, 0.5, 3)
         boxground.SetColor(chrono.ChColor(0.5, 0.7, 0.5))
         self.AddVisualShape(
-            boxground,
-            chrono.ChFrameD(chrono.ChVectorD(0, -1, 0), chrono.QUNIT)
+            boxground, chrono.ChFrameD(chrono.ChVectorD(0, -1, 0), chrono.QUNIT)
         )
