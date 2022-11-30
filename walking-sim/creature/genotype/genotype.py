@@ -34,15 +34,35 @@ class GenotypeNode:
 
     def __init__(self):
         self.dimensions = 0, 0, 0
-        # TODO (see joint types in K. Sims paper)
-        # self.joint_type
+        # TODO (see joint types in K. Sims paper and in PyChrono)
+        self.joint_type
         self.recursive_limit = 0
         # TODO still have to define how to implement neurons
-        # self.neurons
+        self.neurons
         # TODO connections not necessary if using NetworkX lib
-        # self.connections
+        self.connections
 
 
 class GenotypeEdge:
+    """
+    Represents an edge in the genotype directed graph, with information
+    describing a connection between a parent and a child node.
+
+    Attributes:
+        position: 3d position of attachment of a child to its parent, constrained
+                  to be on the parent's surface
+        orientation: an orientation matrix based on the child's parent
+        scale: a scale matrix based on the child's parent
+        reflection: a reflection matrix based on the child's parent
+        terminal_only: boolean flag, which when set to True allows the connection
+                       to be applied only when the recursive_limit of a node is
+                       reached, for hand or tail-like parts
+    """
+
     def __init__(self):
-        pass
+        self.position = 0, 0, 0
+        self.orientation
+        self.scale
+        self.reflection
+
+        self.terminal_only = False
