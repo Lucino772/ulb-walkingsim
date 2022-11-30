@@ -37,7 +37,7 @@ class Ground(chrono.ChBody):
             Ground.x_size,
             Ground.y_size,
             Ground.z_size,
-            chrono.ChVectorD(0, -1, 0),
+            chrono.ChVectorD(0, -self.y_size, 0),
         )
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)
@@ -49,5 +49,6 @@ class Ground(chrono.ChBody):
         )
         boxground.SetColor(chrono.ChColor(0.5, 0.7, 0.3))
         self.AddVisualShape(
-            boxground, chrono.ChFrameD(chrono.ChVectorD(0, -1, 0), chrono.QUNIT)
+            boxground,
+            chrono.ChFrameD(chrono.ChVectorD(0, -self.y_size, 0), chrono.QUNIT),
         )

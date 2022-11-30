@@ -30,7 +30,7 @@ class TestsGenotypeToPhenotype:
     def build_creature_with_one_part(self):
         g = genotype.Genotype()
         #  g.add_node(genotype.GenotypeNode((20, 20, 40)))
-        #  self.env.Add(bone.Bone())
+        self.env.Add(bone.Bone((1, 1, 3)))
 
 
 if __name__ == "__main__":
