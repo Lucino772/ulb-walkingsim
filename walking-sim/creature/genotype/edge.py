@@ -9,8 +9,3 @@ Authors:
 Description:
     Class for an edge between 2 nodes in the genotype directed graph.
 """
-
-
-class GenotypeEdge:
-    def __init__(self):
-        pass
