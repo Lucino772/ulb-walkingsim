@@ -13,7 +13,7 @@ Description:
 import networkx as nx
 
 
-class Genotype(nx.Graph):
+class Genotype(nx.DiGraph):
     def __init__(self):
         pass
 
@@ -32,15 +32,15 @@ class GenotypeNode:
         neurons:
     """
 
-    def __init__(self):
+    def __init__(self, dimensions, joint_type, neurons=[], recursive_limit=0):
         self.dimensions = 0, 0, 0
         # TODO (see joint types in K. Sims paper and in PyChrono)
         self.joint_type
-        self.recursive_limit = 0
         # TODO still have to define how to implement neurons
         self.neurons
         # TODO connections not necessary if using NetworkX lib
         self.connections
+        self.recursive_limit = 0
 
 
 class GenotypeEdge:
