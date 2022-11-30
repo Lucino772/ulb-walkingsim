@@ -32,15 +32,13 @@ class GenotypeNode:
         neurons:
     """
 
-    def __init__(self, dimensions, joint_type, neurons=[], recursive_limit=0):
-        self.dimensions = 0, 0, 0
+    def __init__(self, dimensions, joint_type=None, neurons=[], recursive_limit=0):
+        self.dimensions = dimensions
         # TODO (see joint types in K. Sims paper and in PyChrono)
-        self.joint_type
+        self.joint_type = joint_type
         # TODO still have to define how to implement neurons
-        self.neurons
-        # TODO connections not necessary if using NetworkX lib
-        self.connections
-        self.recursive_limit = 0
+        self.neurons = neurons
+        self.recursive_limit = recursive_limit
 
 
 class GenotypeEdge:
