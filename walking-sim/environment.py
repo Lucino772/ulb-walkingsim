@@ -12,7 +12,7 @@ Description:
 
 import pychrono.core as chrono
 
-from ground import Ground
+import ground
 
 
 class Environment(chrono.ChSystemNSC):
@@ -23,6 +23,6 @@ class Environment(chrono.ChSystemNSC):
 
     def __init__(self):
         super().__init__()
-        self.Add(Ground())
+        self.Add(ground.Ground())
 
         self.Set_G_acc(chrono.ChVectorD(0, -9.81, 0))
