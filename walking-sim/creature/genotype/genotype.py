@@ -10,10 +10,10 @@ Description:
     Classes for a genotype, represented as a directed graph.
 """
 
-# TODO use of NetworkX lib for directed graph?
+import networkx as nx
 
 
-class Genotype:
+class Genotype(nx.Graph):
     def __init__(self):
         pass
 
