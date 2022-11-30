@@ -28,7 +28,7 @@ class Visualiser(chronoirr.ChVisualSystemIrrlicht):
         self.Initialize()
         self.AddSkyBox()
         self.AddCamera(chrono.ChVectorD(0, 20, -80))
-        self.AddLight(chrono.ChVectorD(0, 10, 0), 3000)
+        self.AddLight(chrono.ChVectorD(0, 10, -20), 1000)
 
     def run(self):
         """
