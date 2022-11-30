@@ -24,5 +24,4 @@ class Environment(chrono.ChSystemNSC):
     def __init__(self):
         super().__init__()
         self.Add(ground.Ground())
-
-        #  self.Set_G_acc(chrono.ChVectorD(0, -9.81, 0))
+        self.Set_G_acc(chrono.ChVectorD(0, -9.81, 0))

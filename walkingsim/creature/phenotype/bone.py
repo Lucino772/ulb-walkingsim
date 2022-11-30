@@ -17,7 +17,6 @@ class Bone(chrono.ChBody):
     def __init__(self, dimensions):
         super().__init__()
         self.dimensions = dimensions
-        self.SetBodyFixed(True)
         self._set_collision_shape()
         self._set_box_shape()
 
@@ -25,7 +24,7 @@ class Bone(chrono.ChBody):
         self.GetCollisionModel().ClearModel()
         material = chrono.ChMaterialSurfaceNSC()
         self.GetCollisionModel().AddBox(
-            material, *self.dimensions, chrono.ChVectorD(0, 2, 0)
+            material, *self.dimensions, chrono.ChVectorD(0, 20, 0)
         )
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)
@@ -35,5 +34,5 @@ class Bone(chrono.ChBody):
         boxground.GetBoxGeometry().Size = chrono.ChVectorD(*self.dimensions)
         boxground.SetColor(chrono.ChColor(0.5, 0.7, 0.5))
         self.AddVisualShape(
-            boxground, chrono.ChFrameD(chrono.ChVectorD(0, 2, 0), chrono.QUNIT)
+            boxground, chrono.ChFrameD(chrono.ChVectorD(0, 20, 0), chrono.QUNIT)
         )
