@@ -22,9 +22,13 @@ class Bone(chrono.ChBody):
 
     def _set_collision_shape(self):
         self.GetCollisionModel().ClearModel()
-        material = chrono.ChMaterialSurfaceNSC()
+        bone_material = chrono.ChMaterialSurfaceNSC()
+        bone_material.SetFriction(0.5)
+        bone_material.SetDampingF(0.2)
+        bone_material.SetCompliance(0.0005)
+        bone_material.SetComplianceT(0.0005)
         self.GetCollisionModel().AddBox(
-            material, *self.dimensions, chrono.ChVectorD(0, 20, 0)
+            bone_material, *self.dimensions, chrono.ChVectorD(0, 20, 0)
         )
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)
