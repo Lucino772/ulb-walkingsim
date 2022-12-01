@@ -28,7 +28,7 @@ class TestsGenotypeToPhenotype:
         self.visuals.run()
 
     def build_creature_with_one_part(self):
-        g = genotype.Genotype()
+        #  g = genotype.Genotype()
         #  g.add_node(genotype.GenotypeNode((20, 20, 40)))
         b = bone.Bone((0.3, 1.80, 0.7))
         #  b.SetMass(80)

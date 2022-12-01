@@ -18,21 +18,21 @@ class Genotype(nx.DiGraph):
     Representing a creature genotype as a directed graph.
 
     Nodes describe bones and have the following attributes:
-        dimensions: 3-tuple with 3d size of the body part
-        joint_type: joint type that sets constraints on relative motion
+        dimensions - 3-tuple with 3d size of the body part
+        joint_type - joint type that sets constraints on relative motion
                     between the part and its parent
-        recursive_limit: int stating how many times a phenotype should
+        recursive_limit - int stating how many times a phenotype should
                          add this part if adding it several times recursively
-        neurons:
+        neurons -
 
     Edges describe connections between a parent and a child node and have the
     following attributes:
-        position: 3d position of attachment of a child to its parent, constrained
+        position - 3d position of attachment of a child to its parent, constrained
                   to be on the parent's surface
-        orientation: an orientation matrix based on the child's parent
-        scale: a scale matrix based on the child's parent
-        reflection: a reflection matrix based on the child's parent
-        terminal_only: boolean flag, which when set to True allows the connection
+        orientation - an orientation matrix based on the child's parent
+        scale - a scale matrix based on the child's parent
+        reflection - a reflection matrix based on the child's parent
+        terminal_only - boolean flag, which when set to True allows the connection
                        to be applied only when the recursive_limit of a node is
                        reached, for hand or tail-like parts
     """
@@ -40,9 +40,9 @@ class Genotype(nx.DiGraph):
     def __init__(self, nodes_list, connections_list):
         """
         Args:
-            nodes_list: a list of 2-tuples consisting of (node_nb, attributes_dict)
+            nodes_list - a list of 2-tuples consisting of (node_nb, attributes_dict)
                         for each node
-            connections_list: a list of 3-tuples consisting of (father_node_nb,
+            connections_list - a list of 3-tuples consisting of (father_node_nb,
                               child_node_nb, attributes_dict)
         """
         self.add_nodes_from(nodes_list)
