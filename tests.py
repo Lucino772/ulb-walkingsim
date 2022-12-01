@@ -13,10 +13,10 @@ Description:
 
 import sys
 
-import environment as environment
-import visualiser as visualiser
-import creature.genotype as genotype
-import creature.phenotype.bone as bone
+import walkingsim.environment as environment
+import walkingsim.visualiser as visualiser
+import walkingsim.creature.genotype as genotype
+import walkingsim.creature.phenotype.bone as bone
 
 
 class TestsGenotypeToPhenotype:

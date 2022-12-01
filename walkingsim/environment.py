@@ -12,7 +12,7 @@ Description:
 
 import pychrono.core as chrono
 
-import ground
+import walkingsim.ground as ground
 
 
 class Environment(chrono.ChSystemNSC):
