@@ -14,39 +14,18 @@ import networkx as nx
 
 
 class Genotype(nx.DiGraph):
-    def __init__(self):
-        pass
-
-
-class GenotypeNode:
     """
-    Represents a node in the genotype directed graph, with information
-    describing a rigid body part.
-
-    Attributes:
+    Representing a creature genotype as a directed graph.
+    Nodes describe bones and have the following attributes:
         dimensions: 3-tuple with 3d size of the body part
         joint_type: joint type that sets constraints on relative motion
                     between the part and its parent
         recursive_limit: int stating how many times a phenotype should
                          add this part if adding it several times recursively
         neurons:
-    """
 
-    def __init__(self, dimensions, joint_type=None, neurons=[], recursive_limit=0):
-        self.dimensions = dimensions
-        # TODO (see joint types in K. Sims paper and in PyChrono)
-        self.joint_type = joint_type
-        # TODO still have to define how to implement neurons
-        self.neurons = neurons
-        self.recursive_limit = recursive_limit
-
-
-class GenotypeEdge:
-    """
-    Represents an edge in the genotype directed graph, with information
-    describing a connection between a parent and a child node.
-
-    Attributes:
+    Edges describe connections between a parent and a child node and have the
+    following attributes:
         position: 3d position of attachment of a child to its parent, constrained
                   to be on the parent's surface
         orientation: an orientation matrix based on the child's parent
@@ -58,9 +37,4 @@ class GenotypeEdge:
     """
 
     def __init__(self):
-        self.position = 0, 0, 0
-        self.orientation
-        self.scale
-        self.reflection
-
-        self.terminal_only = False
+        pass
