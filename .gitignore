@@ -299,4 +299,5 @@ cython_debug/
 
 
 # Misc
-examples/
+examples/ex-walker1/
+examples/gym-chrono/
