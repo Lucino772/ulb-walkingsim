@@ -14,6 +14,11 @@ import pychrono as chrono
 
 
 class Bone(chrono.ChBody):
+    """
+    Representing an instance of a creature "bone", which consists of a
+    standard rigid body part, connected to other body parts with joints.
+    """
+
     def __init__(self, dimensions):
         super().__init__()
         self.dimensions = dimensions
