@@ -16,6 +16,7 @@ import networkx as nx
 class Genotype(nx.DiGraph):
     """
     Representing a creature genotype as a directed graph.
+
     Nodes describe bones and have the following attributes:
         dimensions: 3-tuple with 3d size of the body part
         joint_type: joint type that sets constraints on relative motion
@@ -36,5 +37,13 @@ class Genotype(nx.DiGraph):
                        reached, for hand or tail-like parts
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, nodes_list, connections_list):
+        """
+        Args:
+            nodes_list: a list of 2-tuples consisting of (node_nb, attributes_dict)
+                        for each node
+            connections_list: a list of 3-tuples consisting of (father_node_nb,
+                              child_node_nb, attributes_dict)
+        """
+        self.add_nodes_from(nodes_list)
+        self.add_edges_from(connections_list)
