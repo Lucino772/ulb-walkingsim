@@ -299,5 +299,4 @@ cython_debug/
 
 
 # Misc
-ex-walker1/
-pychrono-examples/
+examples/
