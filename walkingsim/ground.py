@@ -13,7 +13,7 @@ Description:
 import pychrono.core as chrono
 
 
-class Ground(chrono.ChBody):
+class Ground(chrono.ChBodyEasyBox):
     """
     Represents an instance of the ground, the base rigid body
     where creatures can walk on.
@@ -22,33 +22,17 @@ class Ground(chrono.ChBody):
     x_size = 100
     y_size = 5
     z_size = 20
+    ground_material = chrono.ChMaterialSurfaceNSC()
 
     def __init__(self):
-        super().__init__()
-        self.SetBodyFixed(True)
-        self._set_collision_shape()
-        self._set_box_shape()
-
-    def _set_collision_shape(self):
-        self.GetCollisionModel().ClearModel()
-        ground_material = chrono.ChMaterialSurfaceNSC()
-        self.GetCollisionModel().AddBox(
-            ground_material,
+        super().__init__(
             Ground.x_size,
             Ground.y_size,
             Ground.z_size,
-            chrono.ChVectorD(0, -self.y_size, 0),
+            4000,
+            True,
+            True,
+            Ground.ground_material,
         )
-        self.GetCollisionModel().BuildModel()
-        self.SetCollide(True)
-
-    def _set_box_shape(self):
-        boxground = chrono.ChBoxShape()
-        boxground.GetBoxGeometry().Size = chrono.ChVectorD(
-            Ground.x_size, Ground.y_size, Ground.z_size
-        )
-        boxground.SetColor(chrono.ChColor(0.5, 0.7, 0.3))
-        self.AddVisualShape(
-            boxground,
-            chrono.ChFrameD(chrono.ChVectorD(0, -self.y_size, 0), chrono.QUNIT),
-        )
+        self.SetBodyFixed(True)
+        self.GetVisualShape(0).SetColor(chrono.ChColor(0.5, 0.7, 0.3))
