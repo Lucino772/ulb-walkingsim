@@ -25,3 +25,6 @@ class Environment(chrono.ChSystemNSC):
         super().__init__()
         self.Add(ground.Ground())
         self.Set_G_acc(chrono.ChVectorD(0, -9.81, 0))
+        # TODO These params make an object fall..
+        #  chrono.ChCollisionModel.SetDefaultSuggestedEnvelope(0.001)
+        #  chrono.ChCollisionModel.SetDefaultSuggestedMargin(0.001)
