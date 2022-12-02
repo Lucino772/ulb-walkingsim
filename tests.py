@@ -37,21 +37,32 @@ class TestsGenotypeToPhenotype:
     def build_creature_with_two_legs(self):
         # TODO establish rules for joint placement in procedural generation
         # based on this example
-        trunk = bone.Bone((0.3, 1.0, 1.0), chrono.ChVectorD(0, 1.9, 0))
-        #  trunk.SetBodyFixed(True)
+        trunk = bone.Bone((0.3, 1.0, 1.0), chrono.ChVectorD(0, 2.9, 0))
+        trunk.SetBodyFixed(True)
         self.env.Add(trunk)
+        # left leg
         leg1 = bone.Bone((0.3, 1.4, 0.2), chrono.ChVectorD(0, 0.7, -0.2))
         self.env.Add(leg1)
-        mlink = chrono.ChLinkRevolute()
-        self.env.Add(mlink)
+        mlink = chrono.ChLinkMotorRotationTorque()
         mframe = chrono.ChFrameD(chrono.ChVectorD(0, 1, -0.2))
         mlink.Initialize(trunk, leg1, mframe)
+        self.env.Add(mlink)
+        # The torque(time) function:
+        #  mtorquetime = chrono.ChFunction_Sine(
+        #      0, 2, 160  # phase [rad]  # frequency [Hz]
+        #  )  # amplitude [Nm]
+        action_a = chrono.ChFunction_Const(-30)
+        mlink.SetTorqueFunction(action_a)
+
+        # right leg
         leg2 = bone.Bone((0.3, 1.4, 0.2), chrono.ChVectorD(0, 0.7, 0.2))
         self.env.Add(leg2)
-        mlink2 = chrono.ChLinkRevolute()
-        self.env.Add(mlink2)
+        mlink2 = chrono.ChLinkMotorRotationTorque()
         mframe2 = chrono.ChFrameD(chrono.ChVectorD(0, 1, 0.2))
         mlink2.Initialize(trunk, leg2, mframe2)
+        self.env.Add(mlink2)
+        action_b = chrono.ChFunction_Const(30)
+        mlink2.SetTorqueFunction(action_b)
 
 
 if __name__ == "__main__":
