@@ -13,15 +13,16 @@ Description:
 import pychrono as chrono
 
 
-class Bone(chrono.ChBody):
+class Bone(chrono.ChBodyEasyBox):
     """
     Representing an instance of a creature "bone", which consists of a
     standard rigid body part, connected to other body parts with joints.
     """
 
-    def __init__(self, dimensions):
+    def __init__(self, dimensions, pos):
         super().__init__()
         self.SetBodyFixed(False)
+        self.SetPos(pos)
         self.dimensions = dimensions
         self._set_collision_shape()
         self._set_box_shape()
@@ -33,9 +34,7 @@ class Bone(chrono.ChBody):
         bone_material.SetDampingF(0.2)
         bone_material.SetCompliance(0.0005)
         bone_material.SetComplianceT(0.0005)
-        self.GetCollisionModel().AddBox(
-            bone_material, *self.dimensions, chrono.ChVectorD(0, 20, 0)
-        )
+        self.GetCollisionModel().AddBox(bone_material, *self.dimensions, self.GetPos())
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)
 
@@ -43,6 +42,4 @@ class Bone(chrono.ChBody):
         boxground = chrono.ChBoxShape()
         boxground.GetBoxGeometry().Size = chrono.ChVectorD(*self.dimensions)
         boxground.SetColor(chrono.ChColor(0.5, 0.7, 0.5))
-        self.AddVisualShape(
-            boxground, chrono.ChFrameD(chrono.ChVectorD(0, 20, 0), chrono.QUNIT)
-        )
+        self.AddVisualShape(boxground, chrono.ChFrameD(self.GetPos()))

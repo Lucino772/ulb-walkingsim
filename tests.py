@@ -11,6 +11,7 @@ Description:
     genotype.
 """
 
+import pychrono as chrono
 import sys
 
 import walkingsim.environment as environment
@@ -34,8 +35,14 @@ class TestsGenotypeToPhenotype:
         #  b.SetMass(80)
         self.env.Add(b)
 
+    def build_creature_with_two_legs(self):
+        trunk = bone.Bone((0.3, 1.0, 0.7), chrono.ChVectorD(0, 20, 0))
+        self.env.Add(trunk)
+        #  leg1 = bone.Bone((0.
+
 
 if __name__ == "__main__":
     t = TestsGenotypeToPhenotype()
-    t.build_creature_with_one_part()
+    #  t.build_creature_with_one_part()
+    t.build_creature_with_two_legs()
     t.run_tests()
