@@ -20,10 +20,6 @@ class Bone(chrono.ChBodyEasyBox):
     """
 
     bone_material = chrono.ChMaterialSurfaceNSC()
-    bone_material.SetFriction(0.5)
-    bone_material.SetDampingF(0.2)
-    bone_material.SetCompliance(0.0005)
-    bone_material.SetComplianceT(0.0005)
 
     def __init__(self, dimensions, pos):
         super().__init__(*dimensions, 1000, True, True, Bone.bone_material)
