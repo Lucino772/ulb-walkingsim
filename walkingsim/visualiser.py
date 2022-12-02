@@ -39,7 +39,7 @@ class Visualiser(chronoirr.ChVisualSystemIrrlicht):
         while self.Run():
             self.BeginScene()
             self.Render()
-            chronoirr.drawAllCOGs(self, 2)  # Draw coord systems
+            #  chronoirr.drawAllCOGs(self, 2)  # Draw coord systems
             chronoirr.drawAllLinkframes(self, 2)
             self.EndScene()
             self._sys.DoStepDynamics(1e-3)
