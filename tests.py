@@ -35,20 +35,23 @@ class TestsGenotypeToPhenotype:
         self.env.Add(b)
 
     def build_creature_with_two_legs(self):
-        trunk = bone.Bone((0.3, 1.0, 0.7), chrono.ChVectorD(0, 0.6, 0))
+        # TODO establish rules for joint placement in procedural generation
+        # based on this example
+        trunk = bone.Bone((0.3, 1.0, 1.0), chrono.ChVectorD(0, 1.9, 0))
+        #  trunk.SetBodyFixed(True)
         self.env.Add(trunk)
-        leg1 = bone.Bone((0.3, 0.7, 0.2), chrono.ChVectorD(0, 0, -0.2))
+        leg1 = bone.Bone((0.3, 1.4, 0.2), chrono.ChVectorD(0, 0.7, -0.2))
         self.env.Add(leg1)
-        leg2 = bone.Bone((0.3, 0.7, 0.2), chrono.ChVectorD(0, 0, 0.2))
-        self.env.Add(leg2)
         mlink = chrono.ChLinkRevolute()
-        mframe = chrono.ChFrameD(chrono.ChVectorD(0, 0, -0.2))
-        mlink.Initialize(trunk, leg1, mframe)
         self.env.Add(mlink)
+        mframe = chrono.ChFrameD(chrono.ChVectorD(0, 1, -0.2))
+        mlink.Initialize(trunk, leg1, mframe)
+        leg2 = bone.Bone((0.3, 1.4, 0.2), chrono.ChVectorD(0, 0.7, 0.2))
+        self.env.Add(leg2)
         mlink2 = chrono.ChLinkRevolute()
-        mframe2 = chrono.ChFrameD(chrono.ChVectorD(0, 0, 0.2))
-        mlink2.Initialize(trunk, leg2, mframe2)
         self.env.Add(mlink2)
+        mframe2 = chrono.ChFrameD(chrono.ChVectorD(0, 1, 0.2))
+        mlink2.Initialize(trunk, leg2, mframe2)
 
 
 if __name__ == "__main__":
