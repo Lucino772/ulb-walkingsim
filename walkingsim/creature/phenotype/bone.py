@@ -21,6 +21,7 @@ class Bone(chrono.ChBody):
 
     def __init__(self, dimensions):
         super().__init__()
+        self.SetBodyFixed(False)
         self.dimensions = dimensions
         self._set_collision_shape()
         self._set_box_shape()
