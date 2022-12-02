@@ -27,7 +27,7 @@ class Visualiser(chronoirr.ChVisualSystemIrrlicht):
         self.SetWindowTitle("3D muscle-based walking sim")
         self.Initialize()
         self.AddSkyBox()
-        self.AddCamera(chrono.ChVectorD(2, 10, 2))
+        self.AddCamera(chrono.ChVectorD(2, 20, 5))
         #  self.AddLight(chrono.ChVectorD(0, 10, -20), 1000)
         self.AddTypicalLights()
 
@@ -40,6 +40,7 @@ class Visualiser(chronoirr.ChVisualSystemIrrlicht):
             self.BeginScene()
             self.Render()
             #  chronoirr.drawAllCOGs(self, 2)  # Draw coord systems
-            chronoirr.drawAllLinkframes(self, 2)
+            #  chronoirr.drawAllLinkframes(self, 2)
+            chronoirr.drawAllLinks(self, 2)
             self.EndScene()
             self._sys.DoStepDynamics(1e-3)
