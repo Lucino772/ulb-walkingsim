@@ -35,16 +35,15 @@ class TestsGenotypeToPhenotype:
         self.env.Add(b)
 
     def build_creature_with_two_legs(self):
-        # TODO establish rules for joint placement in procedural generation
-        # TODO allow penetration by reducing collision box by half
-        # based on this example
+        # TODO establish rules for joint placement
+        # and collision box reductions in procedural generation
         trunk = bone.Bone((0.3, 1.0, 1.0), chrono.ChVectorD(0, 1.9, 0))
         trunk.SetBodyFixed(True)
         self.env.Add(trunk)
         # left leg
         leg1 = bone.Bone((0.3, 1.4, 0.2), chrono.ChVectorD(0, 0.7, -0.2))
         leg1.GetCollisionModel().ClearModel()
-        leg1.GetCollisionModel().AddEllipsoid(
+        leg1.GetCollisionModel().AddBox(
             bone.Bone.bone_material,
             0.15,
             0.35,
@@ -67,7 +66,7 @@ class TestsGenotypeToPhenotype:
         # right leg
         leg2 = bone.Bone((0.3, 1.4, 0.2), chrono.ChVectorD(0, 0.7, 0.2))
         leg2.GetCollisionModel().ClearModel()
-        leg2.GetCollisionModel().AddEllipsoid(
+        leg2.GetCollisionModel().AddBox(
             bone.Bone.bone_material,
             0.15,
             0.35,
