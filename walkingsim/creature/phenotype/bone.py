@@ -19,27 +19,15 @@ class Bone(chrono.ChBodyEasyBox):
     standard rigid body part, connected to other body parts with joints.
     """
 
+    bone_material = chrono.ChMaterialSurfaceNSC()
+    bone_material.SetFriction(0.5)
+    bone_material.SetDampingF(0.2)
+    bone_material.SetCompliance(0.0005)
+    bone_material.SetComplianceT(0.0005)
+
     def __init__(self, dimensions, pos):
-        super().__init__()
+        super().__init__(*dimensions, 1000, True, True, Bone.bone_material)
         self.SetBodyFixed(False)
         self.SetPos(pos)
         self.dimensions = dimensions
-        self._set_collision_shape()
-        self._set_box_shape()
-
-    def _set_collision_shape(self):
-        self.GetCollisionModel().ClearModel()
-        bone_material = chrono.ChMaterialSurfaceNSC()
-        bone_material.SetFriction(0.5)
-        bone_material.SetDampingF(0.2)
-        bone_material.SetCompliance(0.0005)
-        bone_material.SetComplianceT(0.0005)
-        self.GetCollisionModel().AddBox(bone_material, *self.dimensions, self.GetPos())
-        self.GetCollisionModel().BuildModel()
-        self.SetCollide(True)
-
-    def _set_box_shape(self):
-        boxground = chrono.ChBoxShape()
-        boxground.GetBoxGeometry().Size = chrono.ChVectorD(*self.dimensions)
-        boxground.SetColor(chrono.ChColor(0.5, 0.7, 0.5))
-        self.AddVisualShape(boxground, chrono.ChFrameD(self.GetPos()))
+        self.GetVisualShape(0).SetColor(chrono.ChColor(0.5, 0.7, 0.5))
