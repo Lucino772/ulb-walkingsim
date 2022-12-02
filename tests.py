@@ -12,7 +12,6 @@ Description:
 """
 
 import pychrono as chrono
-import sys
 
 import walkingsim.environment as environment
 import walkingsim.visualiser as visualiser
@@ -36,9 +35,12 @@ class TestsGenotypeToPhenotype:
         self.env.Add(b)
 
     def build_creature_with_two_legs(self):
-        trunk = bone.Bone((0.3, 1.0, 0.7), chrono.ChVectorD(0, 20, 0))
+        trunk = bone.Bone((0.3, 1.0, 0.7), chrono.ChVectorD(0, 1, 0))
         self.env.Add(trunk)
-        #  leg1 = bone.Bone((0.
+        leg1 = bone.Bone((0.3, 0.7, 0.2), chrono.ChVectorD(0, 0, -0.2))
+        self.env.Add(leg1)
+        leg2 = bone.Bone((0.3, 0.7, 0.2), chrono.ChVectorD(0, 0, 0.2))
+        self.env.Add(leg2)
 
 
 if __name__ == "__main__":
