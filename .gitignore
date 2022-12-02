@@ -299,6 +299,5 @@ cython_debug/
 
 
 # Misc
-examples/ex-walker1/
-examples/gym-chrono/
+examples/
 *.vim
