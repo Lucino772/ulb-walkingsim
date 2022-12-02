@@ -42,5 +42,6 @@ class Visualiser(chronoirr.ChVisualSystemIrrlicht):
             #  chronoirr.drawAllCOGs(self, 2)  # Draw coord systems
             #  chronoirr.drawAllLinkframes(self, 2)
             chronoirr.drawAllLinks(self, 2)
+            chronoirr.drawAllBoundingBoxes(self)
             self.EndScene()
             self._sys.DoStepDynamics(1e-3)
