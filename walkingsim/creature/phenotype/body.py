@@ -1,22 +1,21 @@
 """
 3D PyChrono muscle-based walking simulator
-File: ground.py
+File: body.py
 Authors:
     BECKER Robin-Gilles
     BOURGEOIS Noé
     HENRY DE FRAHAN Antoine
     PALMISANO Luca
 Description:
-    Class for the ground rigid body.
+    Class for the body system.
 """
 
 import pychrono.core as chrono
 
 
-class Ground(chrono.ChBody):
+class Body(chrono.ChBody):
     """
-    Represents an instance of the ground, the base rigid body
-    where creatures can walk on.
+    Represents an instance of rigid body
     """
 
     def __init__(self):
@@ -28,14 +27,11 @@ class Ground(chrono.ChBody):
     def _set_collision_shape(self):
         self.GetCollisionModel().ClearModel()
         ground_material = chrono.ChMaterialSurfaceNSC()
-        self.GetCollisionModel().AddBox(ground_material
-                                        , 10
-                                        , 0.5
-                                        , 10
-                                        , chrono.ChVectorD(0
-                                                           , -1
-                                                           , 0)
+
+        self.GetCollisionModel().AddBox(
+            ground_material, 10, 0.5, 10, chrono.ChVectorD(0, -1, 0)
         )
+
         self.GetCollisionModel().BuildModel()
         self.SetCollide(True)
 

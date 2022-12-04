@@ -12,11 +12,8 @@ Description:
 """
 import sys
 
-import pychrono
-from pychrono import *
-
-from environment import Environment
-from visualiser import Visualiser
+import environment
+import visualiser
 
 
 def main():
@@ -24,9 +21,8 @@ def main():
     # print chrono version
     # print(pychrono.version)
 
-    environment = Environment()
-    visuals = Visualiser(environment
-                         )
+    env = environment.Environment()
+    visuals = visualiser.Visualiser(env)
     visuals.run()
 
 
