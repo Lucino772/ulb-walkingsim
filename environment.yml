@@ -10,3 +10,4 @@ dependencies:
   - irrlicht=1.8.*
   - pythonocc-core=7.4.*
   - pychrono=7.0.0
+  - networkx=2.8.*
