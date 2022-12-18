@@ -11,3 +11,6 @@ dependencies:
   - pythonocc-core=7.4.*
   - pychrono=7.0.0
   - networkx=2.8.*
+  - pip
+  - pip:
+    - loguru==0.6.*

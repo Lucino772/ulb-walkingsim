@@ -9,3 +9,19 @@ The following command will create a virtual environment named `infof308-chrono` 
 ```shell
 conda env create -f environment.yml
 ```
+
+## Run the simulation
+
+```shell
+python -m walkingsim <environment> <creature>
+```
+
+All the available environments are contained in the `environments/` directory and all the available creatures are contained in the `creatures/` directory.
+
+For example, to run a simulation in the **default** environment and with the **bipede** creature, you can simply run the following command:
+
+```shell
+python -m walkingsim default bipede
+```
+
+If you run the command without passing any value, those are the default values.

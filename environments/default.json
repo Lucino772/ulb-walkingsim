@@ -1,0 +1,4 @@
+{
+    "description": "This environment represents the Earth",
+    "gravity": [0, -9.81, 0]
+}

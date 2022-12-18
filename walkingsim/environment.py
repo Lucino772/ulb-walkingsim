@@ -7,23 +7,56 @@ Authors:
     HENRY DE FRAHAN Antoine
     PALMISANO Luca
 Description:
-    Class for the complete physics system.
+    Class for loading and creating the physics system (= Environment).
 """
+import json
+import os
 
 import pychrono.core as chrono
+from loguru import logger
 
-import walkingsim.ground as ground
 
+class EnvironmentLoader:
+    """Class to load environments from JSON files. 
+    
+    Environments can be described in JSON files in an agnostic way, completely
+    independently of the physics engine used.
 
-class Environment(chrono.ChSystemNSC):
+    The available engines are: 'chrono'
     """
-    Represents an instance of the simulation's
-    physics, as a non-smooth mechanics system.
-    """
 
-    def __init__(self):
-        super().__init__()
-        self.Add(ground.Ground())
-        self.Set_G_acc(chrono.ChVectorD(0, -9.81, 0))
+    def __init__(self, __datapath: str, __engine: str):
+        self.__datapath = __datapath
+        self.__engine = __engine
+
+        self.__loaders = {
+            'chrono': self._load_environment_chrono
+        }
+
+    def load_environment(self, __env: str):
+        """Loads an environment from a JSON file.
+
+        :param __env: The name of the environment to load
+        :return: The environment system
+        """
+        filename = os.path.join(self.__datapath, f'{__env}.json')
+
+        # We do not stop the code here so that `open` will
+        # raise an exception when opening the file.
+        if not os.path.exists(filename):
+            logger.error(f'Environment "{__env}" not found !')
+
+        with open(filename, 'r') as fp:
+            config = json.load(fp)
+
+        logger.success(f'Environment "{__env}" loaded successfully !')
+        return self.__loaders[self.__engine](config)
+
+    def _load_environment_chrono(self, __config: dict):
+        _sys = chrono.ChSystemNSC()
+        _sys.Set_G_acc(chrono.ChVectorD(*__config.get('gravity')))
+
         chrono.ChCollisionModel.SetDefaultSuggestedEnvelope(0.001)
         chrono.ChCollisionModel.SetDefaultSuggestedMargin(0.001)
+
+        return _sys
