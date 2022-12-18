@@ -6,6 +6,12 @@ import walkingsim._logging
 import walkingsim.ground as ground
 from walkingsim.simulation import ChronoSimulation
 
+# todo : for each creature generation group : parallelize the creation
+#  of each creature
+#  - graph pygad
+#  - simulation pychrono
+
+
 def main():
     environment, creature_name = 'default', 'bipede'
     if len(sys.argv) >= 2:
