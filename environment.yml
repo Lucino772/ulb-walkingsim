@@ -14,4 +14,4 @@ dependencies:
   - pip
   - pip:
     - loguru==0.6.*
-  - pygad==2.19.*
+    - pygad==2.18.*
