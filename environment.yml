@@ -1,19 +1,15 @@
-#conflicts for
-#noe conda 22.9
 name: infof308-chrono
 channels:
   - https://conda.anaconda.org/intel
-  - https://conda.anaconda.org/conda-forge
   - https://conda.anaconda.org/projectchrono
-  - defaults
+  - https://conda.anaconda.org/conda-forge
 dependencies:
   - python=3.9
-  - numpy=1.23.*
-  - irrlicht=1.8.*
-  - pythonocc-core=7.4.*
-  - pychrono=7.0.0
-  - networkx=2.8.*
+  - numpy=1.23
+  - irrlicht=1.8
+  - pychrono=7.0
+  - networkx=2.8
+  - loguru=0.6
   - pip
   - pip:
-    - loguru==0.6.*
-    - pygad==2.18.*
+    - pygad==2.18
