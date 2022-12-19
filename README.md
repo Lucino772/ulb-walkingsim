@@ -10,6 +10,12 @@ The following command will create a virtual environment named `infof308-chrono` 
 conda env create -f environment.yml
 ```
 
+To update the environment, you can run the following command:
+
+```shell
+conda env update -n infof308-chrono -f environment.yml --prune
+```
+
 ## Run the simulation
 
 ```shell
