@@ -17,8 +17,8 @@ from loguru import logger
 
 
 class EnvironmentLoader:
-    """Class to load environments from JSON files. 
-    
+    """
+    Class to load environments from JSON files.
     Environments can be described in JSON files in an agnostic way, completely
     independently of the physics engine used.
 
@@ -29,34 +29,39 @@ class EnvironmentLoader:
         self.__datapath = __datapath
         self.__engine = __engine
 
-        self.__loaders = {
-            'chrono': self._load_environment_chrono
-        }
+        self.__loaders = {"chrono": self._load_environment_chrono}
 
     def load_environment(self, __env: str):
-        """Loads an environment from a JSON file.
+        """
+        Loads an environment from a JSON file.
 
         :param __env: The name of the environment to load
         :return: The environment system
         """
-        filename = os.path.join(self.__datapath, f'{__env}.json')
+        filename = os.path.join(self.__datapath, f"{__env}.json")
 
         # We do not stop the code here so that `open` will
         # raise an exception when opening the file.
         if not os.path.exists(filename):
             logger.error(f'Environment "{__env}" not found !')
 
-        with open(filename, 'r') as fp:
+        with open(filename, "r") as fp:
             config = json.load(fp)
 
         logger.success(f'Environment "{__env}" loaded successfully !')
         return self.__loaders[self.__engine](config)
 
     def _load_environment_chrono(self, __config: dict):
-        _sys = chrono.ChSystemNSC()
-        _sys.Set_G_acc(chrono.ChVectorD(*__config.get('gravity')))
+        env = Environment(__config)
+        return env
 
+
+class Environment(chrono.ChSystemNSC):
+    """
+    Represents a physics environment
+    """
+    def __init__(self, config: dict):
+        super().__init__()
+        self.Set_G_acc(chrono.ChVectorD(*config.get("gravity")))
         chrono.ChCollisionModel.SetDefaultSuggestedEnvelope(0.001)
         chrono.ChCollisionModel.SetDefaultSuggestedMargin(0.001)
-
-        return _sys

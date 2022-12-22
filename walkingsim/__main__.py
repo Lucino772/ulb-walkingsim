@@ -24,12 +24,10 @@ def main():
 
     sim = ChronoSimulation(environments_path, environment, creatures_path)
     sim.environment.Add(ground.Ground())
+    sim.add_creature(creature_name)
 
-    creature = sim.generator.generate_creature(creature_name)
-    creature.add(sim.environment)
+    sim.render()
 
-    sim.init()
-    sim.run()
 
 if __name__ == '__main__':
     main()
