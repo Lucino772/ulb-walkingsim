@@ -1,6 +1,10 @@
 name: Create repository visualizer 
+
 on:
-  push
+  push:
+    branches:
+      - main
+
 jobs:
   get_data:
     runs-on: ubuntu-latest
