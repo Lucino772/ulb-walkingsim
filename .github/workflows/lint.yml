@@ -1,0 +1,21 @@
+name: Lint
+
+on: push
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install black & isort
+      run: |
+        pip install isort~=5.11 black~=22.12
+    - name: isort --check
+      run: |
+        isort --check .
+    - name: black --check
+      run: |
+        black --check .

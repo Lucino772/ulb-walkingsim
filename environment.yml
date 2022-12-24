@@ -13,3 +13,5 @@ dependencies:
   - pip
   - pip:
     - pygad==2.18
+    - black~=22.12
+    - isort~=5.11

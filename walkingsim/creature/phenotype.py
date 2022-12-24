@@ -10,9 +10,9 @@ Description:
     Class for a walking creature.
 """
 
-import walkingsim.creature.bone as bone
-
 import pychrono as chrono
+
+import walkingsim.creature.bone as bone
 
 
 class Phenotype:
@@ -33,7 +33,7 @@ class Phenotype:
             if node == 1:  # Root node
                 parent_part = bone.Bone(
                     self.genotype.nodes[node]["dimensions"],
-                    chrono.ChVectorD(0, 1.9, 0)
+                    chrono.ChVectorD(0, 1.9, 0),
                 )
                 parent_part.GetCollisionModel().SetFamily(2)
                 parent_part.SetBodyFixed(True)
@@ -41,27 +41,29 @@ class Phenotype:
                 # parent_part.SetBodyFixed(True)
                 self.bones.append(parent_part)
                 self.env.Add(parent_part)
-            for edge in self.genotype.edges(nbunch=node  # nbunch :
-                                            # iterable container of
-                                            # nodes which will be
-                                            # iterated through once.
-                    , data=True  # If True, return edge attribute
-                                            ):
+            for edge in self.genotype.edges(
+                nbunch=node  # nbunch :
+                # iterable container of
+                # nodes which will be
+                # iterated through once.
+                ,
+                data=True,  # If True, return edge attribute
+            ):
                 new_node = edge[1]
                 dimensions = self.genotype.nodes[new_node]["dimensions"]
                 new_joint = chrono.ChLinkMotorRotationTorque()
                 new_joint_pos = list(edge[2]["position"])
                 # TODO different types of joints?
-                joint_frame = chrono.ChFrameD(
-                    chrono.ChVectorD(*new_joint_pos))
+                joint_frame = chrono.ChFrameD(chrono.ChVectorD(*new_joint_pos))
                 # TODO how to find position of new part based on parent's pos?
                 child_part_pos = new_joint_pos
                 # child_part_pos y -= child bone dimensions why y / 2
                 # y / 2 because the joint is placed at the center of the bone
                 # ?
                 child_part_pos[1] -= dimensions[1] / 2  #
-                child_part = bone.Bone(dimensions, chrono.ChVectorD(
-                    *child_part_pos))  # *child_part_pos : * unpacks the list
+                child_part = bone.Bone(
+                    dimensions, chrono.ChVectorD(*child_part_pos)
+                )  # *child_part_pos : * unpacks the list
                 child_part.GetCollisionModel().ClearModel()  #
                 # ClearModel() : Remove all collision shapes from the model.
                 # because we don't want collision between bones?
@@ -73,12 +75,13 @@ class Phenotype:
                     chrono.ChVectorD(0, 0, 0),
                 )
                 child_part.GetCollisionModel().SetFamily(2)
-                child_part.GetCollisionModel().SetFamilyMaskNoCollisionWithFamily(2)
+                child_part.GetCollisionModel().SetFamilyMaskNoCollisionWithFamily(
+                    2
+                )
                 child_part.GetCollisionModel().BuildModel()
                 self.bones.append(child_part)
                 self.env.Add(child_part)
-                new_joint.Initialize(parent_part, child_part,
-                                     joint_frame)
+                new_joint.Initialize(parent_part, child_part, joint_frame)
                 self.joints.append(new_joint)
                 self.env.Add(new_joint)
 
@@ -88,8 +91,9 @@ class Phenotype:
             sin_torque = chrono.ChFunction_Sine(
                 0  # phase [rad]
                 # , 2  # frequency [Hz]
-                , 1  # frequency [Hz]
-                , mod * 290  # amplitude [Nm] Nm stands for Newton meter
+                ,
+                1,  # frequency [Hz]
+                mod * 290  # amplitude [Nm] Nm stands for Newton meter
                 # , mod * 90  # amplitude [Nm] Nm stands for Newton meter
             )
             self.joints[i].SetTorqueFunction(sin_torque)

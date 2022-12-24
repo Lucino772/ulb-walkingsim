@@ -12,13 +12,12 @@ Description:
 
 import abc
 
-from walkingsim.environment import EnvironmentLoader
-from walkingsim.creature.generator import CreatureGenerator
-from loguru import logger
-
-
 import pychrono as chrono
 import pychrono.irrlicht as chronoirr
+from loguru import logger
+
+from walkingsim.creature.generator import CreatureGenerator
+from walkingsim.environment import EnvironmentLoader
 
 
 class Simulation(abc.ABC):
@@ -35,14 +34,21 @@ class Simulation(abc.ABC):
     """
 
     def __init__(
-        self, __engine: str, __env_datapath: str, __env: str, __creatures_datapath: str, __visualize: bool = False
+        self,
+        __engine: str,
+        __env_datapath: str,
+        __env: str,
+        __creatures_datapath: str,
+        __visualize: bool = False,
     ) -> None:
         self.__engine = __engine
         self.__loader = EnvironmentLoader(__env_datapath, self.__engine)
         self._visualize = __visualize
         self.__environment = self.__loader.load_environment(__env)
 
-        self.__generator = CreatureGenerator(__creatures_datapath, self.__engine)
+        self.__generator = CreatureGenerator(
+            __creatures_datapath, self.__engine
+        )
 
         self.__creature = None
         self.__genome = None
@@ -50,7 +56,9 @@ class Simulation(abc.ABC):
     def add_creature(self, creature_name: str, genome: dict = None):
         # FIXME: This function can be removed and done in the __init__ method
         if self.__creature is not None:
-            logger.error("Cannot add a new creature to the simulation, one already exists !")
+            logger.error(
+                "Cannot add a new creature to the simulation, one already exists !"
+            )
             raise RuntimeError("Creature already exists in simulation")
 
         # FIXME: Pass the genome when creating the creature
@@ -84,9 +92,15 @@ class ChronoSimulation(Simulation):
     """Simulation class for `chrono`."""
 
     def __init__(
-        self, __env_datapath: str, __env: str, __creatures_datapath: str, __visualize: bool = False
+        self,
+        __env_datapath: str,
+        __env: str,
+        __creatures_datapath: str,
+        __visualize: bool = False,
     ) -> None:
-        super().__init__("chrono", __env_datapath, __env, __creatures_datapath, __visualize)
+        super().__init__(
+            "chrono", __env_datapath, __env, __creatures_datapath, __visualize
+        )
         self.__time_step = 1e-2
         self.__renderer = None
         if self._visualize == True:
@@ -130,7 +144,11 @@ class ChronoSimulation(Simulation):
         # 6) Evaluate if simulation is over or not
         sensor_data = self.creature.sensor_data
         if len(sensor_data) > 0:
-            print(sensor_data[-1]['position'], sensor_data[-1]['distance'], sensor_data[-1]['total_distance'])
+            print(
+                sensor_data[-1]["position"],
+                sensor_data[-1]["distance"],
+                sensor_data[-1]["total_distance"],
+            )
 
         # TODO: Using those sensor data, we could calculate som fitness value
         return False, 0

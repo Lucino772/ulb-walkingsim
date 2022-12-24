@@ -7,7 +7,8 @@ class AutoIndent(object):
         self.offset = 0
         self.frame_cache = {}
 
-    def flush(self): pass
+    def flush(self):
+        pass
 
     def indent_level(self):
         i = 0
@@ -25,7 +26,7 @@ class AutoIndent(object):
         return i
 
     def write(self, stuff):
-        indentation = '  ' * self.indent_level()
+        indentation = "  " * self.indent_level()
 
         def indent(l):
             if l:
@@ -33,5 +34,5 @@ class AutoIndent(object):
             else:
                 return l
 
-        stuff = '\n'.join([indent(line) for line in stuff.split('\n')])
+        stuff = "\n".join([indent(line) for line in stuff.split("\n")])
         self.stream.write(stuff)

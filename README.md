@@ -31,3 +31,11 @@ python -m walkingsim default bipede
 ```
 
 If you run the command without passing any value, those are the default values.
+
+## Format
+
+[`black`](https://github.com/psf/black) and [`isort` ](https://github.com/PyCQA/isort) are used to format the code. You can manually format the code using the following commands:
+```
+isort .
+black .
+```

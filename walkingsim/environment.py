@@ -60,6 +60,7 @@ class Environment(chrono.ChSystemNSC):
     """
     Represents a physics environment
     """
+
     def __init__(self, config: dict):
         super().__init__()
         self.Set_G_acc(chrono.ChVectorD(*config.get("gravity")))

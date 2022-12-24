@@ -1,10 +1,12 @@
+import sys
+
+import networkx as nx
+import numpy as np
 import pygad
 from _logging import logger
-import numpy as np
-import networkx as nx
 from creature.genotype import Genotype
+
 from walkingsim.auto_indent import AutoIndent
-import sys
 
 logger.debug("Starting genetic_algorithm.py")
 sys.stdout = AutoIndent(sys.stdout)
@@ -12,27 +14,28 @@ sys.stdout = AutoIndent(sys.stdout)
 
 class GeneticAlgorithm:
     # pygad.set_seed(42)
-    def __init__(self
-                 , population_size
-                 , num_generations
-                 , num_parents_mating
-                 , fitness_func
-                 , num_genes
-                 , gene_type
-                 , gene_space
-                 , init_range_low
-                 , init_range_high
-                 , mutation_percent_genes
-                 , mutation_type
-                 , mutation_num_genes
-                 , mutation_by_replacement
-                 , mutation_range_low
-                 , mutation_range_high
-                 , crossover_type
-                 , crossover_percent_parents
-                 , on_generation
-                 , keep_parents
-                 ):
+    def __init__(
+        self,
+        population_size,
+        num_generations,
+        num_parents_mating,
+        fitness_func,
+        num_genes,
+        gene_type,
+        gene_space,
+        init_range_low,
+        init_range_high,
+        mutation_percent_genes,
+        mutation_type,
+        mutation_num_genes,
+        mutation_by_replacement,
+        mutation_range_low,
+        mutation_range_high,
+        crossover_type,
+        crossover_percent_parents,
+        on_generation,
+        keep_parents,
+    ):
         self.population_size = population_size
         self.num_generations = num_generations
         self.num_parents_mating = num_parents_mating

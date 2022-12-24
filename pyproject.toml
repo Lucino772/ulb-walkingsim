@@ -1,0 +1,15 @@
+[tool.isort]
+profile = "black"
+line_length = 79
+extend_skip_glob = ["doc/*", "examples/*"]
+
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.git
+  | doc
+  | examples
+)/
+'''

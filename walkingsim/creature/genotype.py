@@ -11,9 +11,9 @@ Description:
 """
 import networkx as nx
 
+from walkingsim._logging import logger
 from walkingsim.auto_indent import *
 
-from walkingsim._logging import logger
 logger.debug("Starting genotype.py")
 
 sys.stdout = AutoIndent(sys.stdout)

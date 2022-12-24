@@ -10,22 +10,21 @@ Description:
     Classes for generating creatures.
 """
 
-import os
+import functools
 import json
 import math
-import functools
+import os
 
 import networkx as nx
-
 import pychrono as chrono
+
 
 # FIXME: This function should be moved in another module (utils)
 def _distance(a, b):
     return math.sqrt(
-        (a[0] + b[0])**2
-        + (a[1] + b[1])**2
-        + (a[2] + b[2])**2
+        (a[0] + b[0]) ** 2 + (a[1] + b[1]) ** 2 + (a[2] + b[2]) ** 2
     )
+
 
 class ChronoCreature:
     """Class to create a creature for the `chrono` engine based on a directed
@@ -60,7 +59,9 @@ class ChronoCreature:
 
         return bone
 
-    def _create_body(self, index: int, pos: chrono.ChVectorD, recursive_cnt: int = 0):
+    def _create_body(
+        self, index: int, pos: chrono.ChVectorD, recursive_cnt: int = 0
+    ):
         meta = self.__graph.nodes[index]
         body_part = self._create_bone(meta["dimensions"])
         body_part.GetCollisionModel().SetFamily(self._collision_family)
@@ -93,7 +94,9 @@ class ChronoCreature:
                 do_create_body = False
 
             if do_create_body:
-                _recursive_cnt = recursive_cnt + 1 if edge_node1 == edge_node2 else 0
+                _recursive_cnt = (
+                    recursive_cnt + 1 if edge_node1 == edge_node2 else 0
+                )
 
                 node2_dim = self.__graph.nodes[edge_node2]["dimensions"]
                 node2_body_part_pos = (
@@ -102,7 +105,9 @@ class ChronoCreature:
                     joint_pos[2],
                 )
                 node2_body_part = self._create_body(
-                    edge_node2, chrono.ChVectorD(*node2_body_part_pos), _recursive_cnt
+                    edge_node2,
+                    chrono.ChVectorD(*node2_body_part_pos),
+                    _recursive_cnt,
                 )
 
                 joint.Initialize(body_part, node2_body_part, joint_frame)
@@ -135,29 +140,32 @@ class ChronoCreature:
     def capture_sensor_data(self):
         # We capture the information from basic sensors (position, rotation, etc.)
         pos = self.__bodies[0].GetPos()
-        self.__sensor_data.append({
-            'position': (pos.x, pos.y, pos.z)
-        })
+        self.__sensor_data.append({"position": (pos.x, pos.y, pos.z)})
 
         # We compute additional information (distance, total distance, etc.)
         distance = 0
         total_distance = 0
         if len(self.__sensor_data) > 1:
-            distance = _distance(self.__sensor_data[-1]['position'], self.__sensor_data[0]['position'])
+            distance = _distance(
+                self.__sensor_data[-1]["position"],
+                self.__sensor_data[0]["position"],
+            )
             total_distance = functools.reduce(
                 lambda prev, curr: (
-                    prev[0] if prev[1] is None else prev[0] + _distance(curr['position'], prev[1]['position']), 
-                    curr
-                ), 
+                    prev[0]
+                    if prev[1] is None
+                    else prev[0]
+                    + _distance(curr["position"], prev[1]["position"]),
+                    curr,
+                ),
                 self.__sensor_data,
-                (0, None)
+                (0, None),
             )[0]
 
         # We update the last sensor data added with those additional information
-        self.__sensor_data[-1].update({
-            'distance': distance,
-            'total_distance': total_distance
-        })
+        self.__sensor_data[-1].update(
+            {"distance": distance, "total_distance": total_distance}
+        )
 
     @property
     def sensor_data(self):
@@ -202,10 +210,14 @@ class CreatureGenerator:
 
         nodes = [(node["id"], node["meta"]) for node in creature_spec["nodes"]]
 
-        edges = [(*edge["nodes"], edge["meta"]) for edge in creature_spec["edges"]]
+        edges = [
+            (*edge["nodes"], edge["meta"]) for edge in creature_spec["edges"]
+        ]
 
         creature_graph = nx.MultiDiGraph()
         creature_graph.add_nodes_from(nodes)
         creature_graph.add_edges_from(edges)
 
-        return self.__creature[self.__engine](__creature, creature_graph, (0, 1.9, 0))
+        return self.__creature[self.__engine](
+            __creature, creature_graph, (0, 1.9, 0)
+        )
