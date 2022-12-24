@@ -12,11 +12,20 @@ Description:
 
 import os
 import json
+import math
+import functools
 
 import networkx as nx
 
 import pychrono as chrono
 
+# FIXME: This function should be moved in another module (utils)
+def _distance(a, b):
+    return math.sqrt(
+        (a[0] + b[0])**2
+        + (a[1] + b[1])**2
+        + (a[2] + b[2])**2
+    )
 
 class ChronoCreature:
     """Class to create a creature for the `chrono` engine based on a directed
@@ -32,6 +41,7 @@ class ChronoCreature:
 
         self.__joints = []
         self.__bodies = []
+        self.__sensor_data = []
 
         self._create_morphology()
 
@@ -61,8 +71,8 @@ class ChronoCreature:
         self.__bodies.append(body_part)
 
         # FIXME: For debug purposes
-        if index == 0:
-            body_part.SetBodyFixed(True)
+        # if index == 0:
+        #     body_part.SetBodyFixed(True)
 
         for (edge_node1, edge_node2, edge_meta) in self.__graph.edges(
             nbunch=index, data=True
@@ -122,9 +132,36 @@ class ChronoCreature:
         for joint in self.__joints:
             __env.Add(joint)
 
-    def get_sensor_data(self):
-        # FIXME return meaningful data about the current step state (speeds, positions, etc)
-        pass
+    def capture_sensor_data(self):
+        # We capture the information from basic sensors (position, rotation, etc.)
+        pos = self.__bodies[0].GetPos()
+        self.__sensor_data.append({
+            'position': (pos.x, pos.y, pos.z)
+        })
+
+        # We compute additional information (distance, total distance, etc.)
+        distance = 0
+        total_distance = 0
+        if len(self.__sensor_data) > 1:
+            distance = _distance(self.__sensor_data[-1]['position'], self.__sensor_data[0]['position'])
+            total_distance = functools.reduce(
+                lambda prev, curr: (
+                    prev[0] if prev[1] is None else prev[0] + _distance(curr['position'], prev[1]['position']), 
+                    curr
+                ), 
+                self.__sensor_data,
+                (0, None)
+            )[0]
+
+        # We update the last sensor data added with those additional information
+        self.__sensor_data[-1].update({
+            'distance': distance,
+            'total_distance': total_distance
+        })
+
+    @property
+    def sensor_data(self):
+        return self.__sensor_data
 
 
 class CreatureGenerator:
