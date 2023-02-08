@@ -99,7 +99,7 @@ class ChronoSimulation(Simulation):
         )
         self.__time_step = 1e-2
         self.__renderer = None
-        if self._visualize == True:
+        if self._visualize is True:
             # FIXME use ChIrrApp to have a GUI and tweak parameters within rendering
             self.__renderer = chronoirr.ChVisualSystemIrrlicht()
 
@@ -138,13 +138,14 @@ class ChronoSimulation(Simulation):
         # 4) Compute reward and add it to total reward/fitness
         # 5) Do timestep in environment
         # 6) Evaluate if simulation is over or not
-        sensor_data = self.creature.sensor_data
-        if len(sensor_data) > 0:
-            print(
-                sensor_data[-1]["position"],
-                sensor_data[-1]["distance"],
-                sensor_data[-1]["total_distance"],
-            )
+
+        #  sensor_data = self.creature.sensor_data
+        #  if len(sensor_data) > 0:
+        #      print(
+        #          sensor_data[-1]["position"],
+        #          sensor_data[-1]["distance"],
+        #          sensor_data[-1]["total_distance"],
+        #      )
 
         # TODO: Using those sensor data, we could calculate som fitness value
         return False, 0
@@ -166,7 +167,7 @@ class ChronoSimulation(Simulation):
                 if self._visualize:
                     self._render_step()
 
-                self.creature.capture_sensor_data()
+                #  self.creature.capture_sensor_data()
                 self.environment.DoStepDynamics(self.__time_step)
         except KeyboardInterrupt:
             logger.info("Simulation was stopped by user")
