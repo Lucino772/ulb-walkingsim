@@ -17,7 +17,8 @@ import pychrono as chrono
 
 class Quadrupede:
     _trunk_collision_family = 2
-    _trunk_dimensions = (0.5, 0.5, 0.5)
+    _trunk_dimensions = (1.0, 0.5, 0.5)
+    _legs_dimensions = (0.3, 0.7, 0.2)
 
     def __init__(self, pos: tuple) -> None:
         self.__pos = chrono.ChVectorD(pos[0], pos[1], pos[2])
@@ -26,7 +27,8 @@ class Quadrupede:
         self.__bodies = []
         self.__sensor_data = []
 
-        self._create_morphology()
+        self._create_trunk()
+        self._create_legs()
 
     def _create_bone(self, size: tuple):
         bone_material = chrono.ChMaterialSurfaceNSC()
@@ -43,10 +45,6 @@ class Quadrupede:
 
         return bone
 
-    def _create_morphology(self):
-        self._create_trunk()
-        self._create_legs()
-
     def _create_trunk(self):
         trunk_part = self._create_bone(self._trunk_dimensions)
         trunk_part.GetCollisionModel().SetFamily(self._trunk_collision_family)
@@ -56,10 +54,21 @@ class Quadrupede:
         trunk_part.SetPos(self.__pos)
         self.__bodies.append(trunk_part)
 
-        # FIXME: For debug purposes
+        # XXX: For debug purposes
         # if index == 0:
         #     body_part.SetBodyFixed(True)
 
+    def _create_legs(self):
+        x_trunk = self.__pos.x()
+        x_back_legs = x_trunk - 0.8 * (self._trunk_dimensions[0] / 2)
+        x_front_legs = x_trunk + 0.8 * (self._trunk_dimensions[0] / 2)
+
+        y_trunk = self.__pos.y()
+        y_left_legs = y_trunk + (self._trunk_dimensions[1] / 2)
+        y_right_legs = y_trunk - (self._trunk_dimensions[1] / 2)
+
+        z_trunk = self.__pos.z()
+        z_legs = z_trunk - 0.8 * (self._trunk_dimensions[2] / 2)
 
     def _create_body():
         for (edge_node1, edge_node2, edge_meta) in self.__graph.edges(
