@@ -25,7 +25,7 @@ from walkingsim.simulation import ChronoSimulation
 
 
 def main():
-    creature_name = "default", "bipede"
+    environment, creature_name = "default", "bipede"
     if len(sys.argv) >= 2:
         environment = sys.argv[1]
     if len(sys.argv) >= 3:

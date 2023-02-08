@@ -58,7 +58,7 @@ class Simulation(abc.ABC):
             raise RuntimeError("Creature already exists in simulation")
 
         # FIXME: Pass the genome when creating the creature
-        creature = Quadrupede(0, 1.9, 0)
+        creature = Quadrupede((0, 1.9, 0))
         creature.add_to_env(self.environment)
         self.__creature = creature
         self.__genome = genome
