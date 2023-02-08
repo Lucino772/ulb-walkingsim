@@ -61,7 +61,7 @@ class Quadrupede:
         x_front_legs = x_trunk + 0.8 * (self._trunk_dimensions[0] / 2)
 
         y_trunk = self.__pos.y
-        y_legs = y_trunk - 0.8 * (self._trunk_dimensions[1] / 2)
+        y_legs = y_trunk - 1.8 * (self._trunk_dimensions[1] / 2)
 
         z_trunk = self.__pos.z
         z_left_legs = z_trunk + (self._trunk_dimensions[2] / 2)
