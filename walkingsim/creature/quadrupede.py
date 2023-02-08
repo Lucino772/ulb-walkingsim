@@ -10,8 +10,6 @@ Description:
     Class for basic quadruped creature.
 """
 
-import functools
-
 import pychrono as chrono
 
 
@@ -63,16 +61,16 @@ class Quadrupede:
         x_front_legs = x_trunk + 0.8 * (self._trunk_dimensions[0] / 2)
 
         y_trunk = self.__pos.y()
-        y_left_legs = y_trunk + (self._trunk_dimensions[1] / 2)
-        y_right_legs = y_trunk - (self._trunk_dimensions[1] / 2)
+        y_legs = y_trunk - 0.8 * (self._trunk_dimensions[1] / 2)
 
         z_trunk = self.__pos.z()
-        z_legs = z_trunk - 0.8 * (self._trunk_dimensions[2] / 2)
+        z_left_legs = z_trunk + (self._trunk_dimensions[2] / 2)
+        z_right_legs = z_trunk - (self._trunk_dimensions[2] / 2)
 
-        self._create_single_leg(x_front_legs, y_left_legs, z_legs)
-        self._create_single_leg(x_front_legs, y_right_legs, z_legs)
-        self._create_single_leg(x_back_legs, y_left_legs, z_legs)
-        self._create_single_leg(x_back_legs, y_right_legs, z_legs)
+        self._create_single_leg(x_front_legs, y_legs, z_left_legs)
+        self._create_single_leg(x_front_legs, y_legs, z_right_legs)
+        self._create_single_leg(x_back_legs, y_legs, z_left_legs)
+        self._create_single_leg(x_back_legs, y_legs, z_right_legs)
 
     def _create_single_leg(self, *pos):
         leg_part = self._create_bone(self._legs_dimensions)
