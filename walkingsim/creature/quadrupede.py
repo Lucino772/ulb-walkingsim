@@ -27,6 +27,7 @@ class Quadrupede:
 
         self._create_trunk()
         self._create_legs()
+        self._apply_forces()
 
     def _create_bone(self, size: tuple):
         bone_material = chrono.ChMaterialSurfaceNSC()
