@@ -16,7 +16,7 @@ import pychrono as chrono
 class Quadrupede:
     _collision_family = 2
     _trunk_dimensions = (1.0, 0.5, 0.5)
-    _legs_dimensions = (0.3, 0.7, 0.2)
+    _legs_dimensions = (0.3, 0.7, 0.15)
 
     def __init__(self, pos: tuple) -> None:
         self.__pos = chrono.ChVectorD(pos[0], pos[1], pos[2])
@@ -53,7 +53,7 @@ class Quadrupede:
         self.__bodies.append(trunk_part)
 
         # XXX: For debug purposes
-        trunk_part.SetBodyFixed(True)
+        #  trunk_part.SetBodyFixed(True)
 
     def _create_legs(self):
         x_trunk = self.__pos.x
