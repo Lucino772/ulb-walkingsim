@@ -26,6 +26,57 @@ def _distance(a, b):
     )
 
 
+class CreatureGenerator:
+    """Class to generate creatures based on a JSON file.
+
+    Each JSON file describes a creature genotype as a directed graph.
+
+    Nodes describe bones and have the following attributes:
+    - dimensions: 3-tuple with 3d size of the body part
+    - joint_type: joint type that sets constraints on relative motion between
+                  the part and its parent
+    - recursive_limit: int stating how many times a phenotype should
+                       add this part if adding it several times recursively
+    - neurons
+
+    Edges describe connections between a parent and a child node and have the
+    following attributes:
+    - position: 3d position of attachment of a child to its parent, constrained
+                to be on the parent's surface
+    - orientation: an orientation matrix based on the child's parent
+    - scale: a scale matrix based on the child's parent
+    - reflection: a reflection matrix based on the child's parent
+    - terminal_only: boolean flag, which when set to True allows the connection
+                     to be applied only when the recursive_limit of a node is
+                     reached, for hand or tail-like parts
+    """
+
+    def __init__(self, __datapath: str, __engine: str) -> None:
+        self.__datapath = __datapath
+        self.__engine = __engine
+
+        self.__creature = {"chrono": ChronoCreature}
+
+    def generate_creature(self, __creature: str):
+        filename = os.path.join(self.__datapath, f"{__creature}.json")
+        with open(filename, "r") as fp:
+            creature_spec = json.load(fp)
+
+        nodes = [(node["id"], node["meta"]) for node in creature_spec["nodes"]]
+
+        edges = [
+            (*edge["nodes"], edge["meta"]) for edge in creature_spec["edges"]
+        ]
+
+        creature_graph = nx.MultiDiGraph()
+        creature_graph.add_nodes_from(nodes)
+        creature_graph.add_edges_from(edges)
+
+        return self.__creature[self.__engine](
+            __creature, creature_graph, (0, 1.9, 0)
+        )
+
+
 class ChronoCreature:
     """Class to create a creature for the `chrono` engine based on a directed
     graph, which represents the creature genotype.
@@ -171,53 +222,3 @@ class ChronoCreature:
     def sensor_data(self):
         return self.__sensor_data
 
-
-class CreatureGenerator:
-    """Class to generate creatures based on a JSON file.
-
-    Each JSON file describes a creature genotype as a directed graph.
-
-    Nodes describe bones and have the following attributes:
-    - dimensions: 3-tuple with 3d size of the body part
-    - joint_type: joint type that sets constraints on relative motion between
-                  the part and its parent
-    - recursive_limit: int stating how many times a phenotype should
-                       add this part if adding it several times recursively
-    - neurons
-
-    Edges describe connections between a parent and a child node and have the
-    following attributes:
-    - position: 3d position of attachment of a child to its parent, constrained
-                to be on the parent's surface
-    - orientation: an orientation matrix based on the child's parent
-    - scale: a scale matrix based on the child's parent
-    - reflection: a reflection matrix based on the child's parent
-    - terminal_only: boolean flag, which when set to True allows the connection
-                     to be applied only when the recursive_limit of a node is
-                     reached, for hand or tail-like parts
-    """
-
-    def __init__(self, __datapath: str, __engine: str) -> None:
-        self.__datapath = __datapath
-        self.__engine = __engine
-
-        self.__creature = {"chrono": ChronoCreature}
-
-    def generate_creature(self, __creature: str):
-        filename = os.path.join(self.__datapath, f"{__creature}.json")
-        with open(filename, "r") as fp:
-            creature_spec = json.load(fp)
-
-        nodes = [(node["id"], node["meta"]) for node in creature_spec["nodes"]]
-
-        edges = [
-            (*edge["nodes"], edge["meta"]) for edge in creature_spec["edges"]
-        ]
-
-        creature_graph = nx.MultiDiGraph()
-        creature_graph.add_nodes_from(nodes)
-        creature_graph.add_edges_from(edges)
-
-        return self.__creature[self.__engine](
-            __creature, creature_graph, (0, 1.9, 0)
-        )
