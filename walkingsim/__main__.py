@@ -3,6 +3,9 @@ import sys
 import walkingsim.ground as ground
 from walkingsim.simulation import ChronoSimulation
 
+# Import before everything else, this module configures the loguru logger
+import walkingsim._logging
+
 # todo : for each creature generation group : parallelize the creation
 #  of each creature
 #  - graph pygad
