@@ -16,7 +16,8 @@ import pychrono as chrono
 import pychrono.irrlicht as chronoirr
 from loguru import logger
 
-from walkingsim.creature.quadrupede import Quadrupede
+from walkingsim.creature.quadrupede.quadrupede import Quadrupede
+# from walkingsim.creature.bipede.bipede import Bipede
 from walkingsim.environment import EnvironmentLoader
 
 
@@ -59,6 +60,7 @@ class Simulation(abc.ABC):
 
         # FIXME: Pass the genome when creating the creature
         creature = Quadrupede((0, 1.9, 0))
+        # creature = Bipede((0, 1.9, 0))
         creature.add_to_env(self.environment)
         self.__creature = creature
         self.__genome = genome
@@ -97,7 +99,8 @@ class ChronoSimulation(Simulation):
         super().__init__(
             "chrono", __env_datapath, __env, __creatures_datapath, __visualize
         )
-        self.__time_step = 1e-2
+        # self.__time_step = 1e-2
+        self.__time_step = 1e-3
         self.__renderer = None
         if self._visualize is True:
             # FIXME use ChIrrApp to have a GUI and tweak parameters within rendering
@@ -111,7 +114,8 @@ class ChronoSimulation(Simulation):
         self.__renderer.SetWindowTitle("3D muscle-based walking sim")
         self.__renderer.Initialize()
         self.__renderer.AddSkyBox()
-        self.__renderer.AddCamera(chrono.ChVectorD(2, 10, 3))
+        # self.__renderer.AddCamera(chrono.ChVectorD(2, 10, 3))
+        self.__renderer.AddCamera(chrono.ChVectorD(5, 5, 3))
         #  self.__renderer.AddLight(chrono.ChVectorD(0, 10, -20), 1000)
         self.__renderer.AddTypicalLights()
 

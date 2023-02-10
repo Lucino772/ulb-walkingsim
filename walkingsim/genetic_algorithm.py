@@ -4,7 +4,7 @@ import networkx as nx
 import numpy as np
 import pygad
 from _logging import logger
-from creature.genotype import Genotype
+#todo from creature.genotype import Genotype
 
 from walkingsim.auto_indent import AutoIndent
 
