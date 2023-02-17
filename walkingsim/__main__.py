@@ -1,18 +1,7 @@
-import sys
-
-import walkingsim.ground as ground
-from walkingsim.simulation import ChronoSimulation
-
-# Import before everything else, this module configures the loguru logger
-import walkingsim._logging
-
-# todo : for each creature generation group : parallelize the creation
-#  of each creature
-#  - graph pygad
-#  - simulation pychrono
+from walkingsim.algorithms.ga import GeneticAlgorithm
 
 # The programs has 2 steps:
-# 1. Training ours models and get the results
+# 1. Training our models and get the results
 # 2. Visualize those results
 
 # Training (with PyGad)
@@ -28,22 +17,14 @@ import walkingsim._logging
 
 
 def main():
-    environment, creature_name = "default", "bipede"
-    if len(sys.argv) >= 2:
-        environment = sys.argv[1]
-    if len(sys.argv) >= 3:
-        creature_name = sys.argv[2]
-
-    environments_path = "./environments"
-    creatures_path = "./creatures"
-
-    sim = ChronoSimulation(
-        environments_path, environment, creatures_path, True
+    GA = GeneticAlgorithm(
+        population_size=200,
+        num_generations=100,
+        num_parents_mating=2,
+        mutation_percent_genes=10,
+        num_joints=4,
     )
-    sim.environment.Add(ground.Ground())
-    sim.add_creature(creature_name)
-
-    sim.run()
+    GA.run()
 
 
 if __name__ == "__main__":

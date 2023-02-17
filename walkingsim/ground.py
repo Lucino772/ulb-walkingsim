@@ -35,5 +35,5 @@ class Ground(chrono.ChBodyEasyBox):
             Ground.ground_material,
         )
         self.SetBodyFixed(True)
-        self.SetPos(chrono.ChVectorD(0, -Ground.y_size / 2 - 0.5, 0))
+        self.SetPos(chrono.ChVectorD(0, -Ground.y_size / 2, 0))
         self.GetVisualShape(0).SetColor(chrono.ChColor(0.5, 0.7, 0.3))

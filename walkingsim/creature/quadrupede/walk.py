@@ -1,1 +1,0 @@
-"quadrupede walk module"
