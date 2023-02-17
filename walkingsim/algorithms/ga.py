@@ -4,9 +4,9 @@ import sys
 
 import pygad as pygad_
 
-from walkingsim.utils.loguru_log import logger
-from walkingsim.utils.auto_indent import AutoIndent
 from walkingsim.simulation import ChronoSimulation
+from walkingsim.utils.auto_indent import AutoIndent
+from walkingsim.utils.loguru_log import logger
 
 # todo from creature.genotype import Genotype
 
@@ -17,12 +17,12 @@ sys.stdout = AutoIndent(sys.stdout)
 
 class GeneticAlgorithm:
     def __init__(
-            self,
-            population_size,
-            num_generations,
-            num_parents_mating,
-            mutation_percent_genes,
-            num_joints,
+        self,
+        population_size,
+        num_generations,
+        num_parents_mating,
+        mutation_percent_genes,
+        num_joints,
     ):
         self.population_size = population_size
         self.num_generations = num_generations
@@ -38,8 +38,7 @@ class GeneticAlgorithm:
             num_genes=self.num_joints * self.num_steps,
             mutation_percent_genes=self.mutation_percent_genes,
             fitness_func=self.fitness_function,
-            parallel_processing=2  # quantity of cores to use
-
+            parallel_processing=2,  # quantity of cores to use
         )
 
     @staticmethod
@@ -79,8 +78,7 @@ class GeneticAlgorithm:
         with open("solution.dat", "wb") as fp:
             pickle.dump(best_sol, fp)
 
-        logger.success(
-            "Best genome was successfully written in solution.dat")
+        logger.success("Best genome was successfully written in solution.dat")
 
     def plot(self):
         self.ga.plot_fitness()
