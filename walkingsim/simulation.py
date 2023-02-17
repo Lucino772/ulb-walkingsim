@@ -17,7 +17,6 @@ import pychrono as chrono
 import pychrono.irrlicht as chronoirr
 from loguru import logger
 
-from walkingsim.creature.bipede import Bipede
 from walkingsim.creature.quadrupede import Quadrupede
 from walkingsim.environment import EnvironmentLoader
 
@@ -242,7 +241,7 @@ class ChronoSimulation(Simulation):
         return trunk_y < 1.2 * height_limit
 
     def run(self):
-        logger.info("Starting simulation")
+        logger.debug("Starting simulation")
 
         if self._visualize:
             self._render_setup()
@@ -261,5 +260,5 @@ class ChronoSimulation(Simulation):
         if self.__renderer:
             self.__renderer.GetDevice().closeDevice()
 
-        logger.info("Simulation is done")
+        logger.debug("Simulation is done")
         return self.total_reward

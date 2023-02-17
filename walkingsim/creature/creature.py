@@ -13,7 +13,7 @@ Description:
 
 import pychrono as chrono
 
-import walkingsim.utils as utils
+import walkingsim.utils.utils as utils
 
 
 class CreatureSuperClass:

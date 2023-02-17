@@ -18,8 +18,8 @@ from walkingsim.algorithms.ga import GeneticAlgorithm
 
 def main():
     GA = GeneticAlgorithm(
-        population_size=200,
-        num_generations=100,
+        population_size=20,
+        num_generations=10,
         num_parents_mating=2,
         mutation_percent_genes=10,
         num_joints=4,
