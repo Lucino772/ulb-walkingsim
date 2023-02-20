@@ -50,7 +50,7 @@ class EnvironmentLoader:
         with open(filename, "r") as fp:
             config = json.load(fp)
 
-        logger.success(f'Environment "{__env}" loaded successfully !')
+        logger.debug(f'Environment "{__env}" loaded successfully !')
         return self.__loaders[self.__engine](config)
 
     def _load_environment_chrono(self, __config: dict):
@@ -80,4 +80,4 @@ class Environment(chrono.ChSystemNSC):
     def reset(self):
         self.Clear()
         self._add_ground()
-        logger.info("Environment reset")
+        logger.debug("Environment reset")

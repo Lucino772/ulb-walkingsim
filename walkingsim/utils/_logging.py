@@ -8,3 +8,9 @@ import os
 os.environ["LOGURU_LEVEL"] = "INFO"
 
 from loguru import logger
+from tqdm import tqdm
+
+# Interoperability with tqdm iterations
+# https://loguru.readthedocs.io/en/stable/resources/recipes.html#interoperability-with-tqdm-iterations
+logger.remove()
+logger.add(lambda msg: tqdm.write(msg, end=""), colorize=True)

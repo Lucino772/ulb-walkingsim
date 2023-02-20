@@ -1,18 +1,13 @@
 import os
 import pickle
-import sys
 
 import pygad as pygad_
+from loguru import logger
 
 from walkingsim.simulation import ChronoSimulation
-from walkingsim.utils.auto_indent import AutoIndent
-from walkingsim.utils.loguru_log import logger
+from walkingsim.utils import progress
 
 # todo from creature.genotype import Genotype
-
-
-logger.debug("Starting genetic_algorithm.py")
-sys.stdout = AutoIndent(sys.stdout)
 
 
 class GeneticAlgorithm:
@@ -38,8 +33,36 @@ class GeneticAlgorithm:
             num_genes=self.num_joints * self.num_steps,
             mutation_percent_genes=self.mutation_percent_genes,
             fitness_func=self.fitness_function,
-            parallel_processing=2,  # quantity of cores to use
+            on_generation=self._on_generation,
+            on_start=self._on_start,
+            on_mutation=self._on_mutation,
+            on_stop=self._on_stop,
+            parallel_processing=10,  # quantity of cores to use
         )
+
+    @staticmethod
+    def _on_start(ga_instance):
+        progress.create_pb(
+            "simulations",
+            total=ga_instance.sol_per_pop,
+            desc="Generation X",
+            leave=False,
+        )
+
+    @staticmethod
+    def _on_mutation(ga_instance, offspring_mutation):
+        progress.reset_pb("simulations", ga_instance.sol_per_pop)
+        progress.set_pb_desc(
+            "simulations", f"Generation {ga_instance.generations_completed}"
+        )
+
+    @staticmethod
+    def _on_generation(ga_instance):
+        progress.update_pb("generations", 1)
+
+    @staticmethod
+    def _on_stop(ga_instance, last_population_fitness):
+        progress.close_pb("simulations")
 
     @staticmethod
     def fitness_function(individual, solution_idx):
@@ -52,8 +75,8 @@ class GeneticAlgorithm:
             2) The solution's index within the population.
 
         """
-        logger.debug("Starting simulation {}", solution_idx)
-        logger.debug("Creature genome: {}", individual)
+        logger.debug("Simulation {}".format(solution_idx))
+        logger.debug("Creature genome: {}".format(individual))
         # Simulate the movement of the quadruped based on the movement matrix
         # and the sensor data
 
@@ -70,15 +93,16 @@ class GeneticAlgorithm:
         )
         # simulation.add_creature(creature_name="bipede")
         fitness = simulation.run()
-        logger.debug("Simulation {} ended", solution_idx)
-        logger.debug("Creature fitness: {}", fitness)
+        logger.debug("Creature fitness: {}".format(fitness))
+        progress.update_pb("simulations", 1)
+        progress.refresh_pb("generations")
         return fitness
 
     def save_sol(self, best_sol):
         with open("solution.dat", "wb") as fp:
             pickle.dump(best_sol, fp)
 
-        logger.success("Best genome was successfully written in solution.dat")
+        logger.info("Best genome was successfully written in solution.dat")
 
     def plot(self):
         self.ga.plot_fitness()
@@ -86,12 +110,17 @@ class GeneticAlgorithm:
         self.ga.plot_new_solution_rate()
 
     def run(self):
-        # Do not show loguru messages
-        os.environ["LOGURU_LEVEL"] = "ERROR"
+        progress.create_pb(
+            "generations",
+            total=self.num_generations,
+            desc="Generations",
+            leave=False,
+        )
+
         self.ga.run()
         best_solution, best_fitness, _ = self.ga.best_solution()
         logger.info("Genetic Algorithm ended")
-        logger.info("Best genome: {}", best_solution)
+        logger.info("Best genome: {}".format(best_solution))
         # print the best solution
         # for i in range(self.num_joints):
         #     print("Joint {}:", i)
@@ -100,5 +129,7 @@ class GeneticAlgorithm:
         #             "Step", j,
         #             ":", best_solution[i * self.num_steps + j],
         #         )
-        logger.info("Best fitness: {}", best_fitness)
+        logger.info("Best fitness: {}".format(best_fitness))
         self.save_sol(best_solution)
+
+        progress.close_all_pb()

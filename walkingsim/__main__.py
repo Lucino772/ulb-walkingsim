@@ -1,3 +1,4 @@
+import walkingsim.utils._logging  # Configure logging
 from walkingsim.algorithms.ga import GeneticAlgorithm
 
 # The programs has 2 steps:
