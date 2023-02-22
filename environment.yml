@@ -12,6 +12,6 @@ dependencies:
   - loguru=0.6
   - pip
   - pip:
-    - pygad==2.18
+    - pygad==2.19
     - black~=22.12
     - isort~=5.11
