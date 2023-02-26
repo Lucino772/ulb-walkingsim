@@ -2,10 +2,10 @@ import os
 import pickle
 
 import pygad as pygad_
+import tqdm
 from loguru import logger
 
 from walkingsim.simulation import ChronoSimulation
-from walkingsim.utils import progress
 
 # todo from creature.genotype import Genotype
 
@@ -34,38 +34,35 @@ class GeneticAlgorithm:
             mutation_percent_genes=self.mutation_percent_genes,
             fitness_func=self.fitness_function,
             on_generation=self._on_generation,
-            on_start=self._on_start,
             on_mutation=self._on_mutation,
             on_stop=self._on_stop,
             parallel_processing=10,  # quantity of cores to use
         )
 
-    @staticmethod
-    def _on_start(ga_instance):
-        progress.create_pb(
-            "simulations",
-            total=ga_instance.sol_per_pop,
+        self.progress_sims = tqdm.tqdm(
+            total=self.ga.sol_per_pop,
             desc="Generation X",
             leave=False,
         )
-
-    @staticmethod
-    def _on_mutation(ga_instance, offspring_mutation):
-        progress.reset_pb("simulations", ga_instance.sol_per_pop)
-        progress.set_pb_desc(
-            "simulations", f"Generation {ga_instance.generations_completed}"
+        self.progress_gens = tqdm.tqdm(
+            total=self.num_generations,
+            desc="Generations",
+            leave=False,
         )
 
-    @staticmethod
-    def _on_generation(ga_instance):
-        progress.update_pb("generations", 1)
+    def _on_mutation(self, ga_instance, offspring_mutation):
+        self.progress_sims.reset(ga_instance.sol_per_pop)
+        self.progress_sims.set_description(
+            f"Generation {ga_instance.generations_completed}"
+        )
 
-    @staticmethod
-    def _on_stop(ga_instance, last_population_fitness):
-        progress.close_pb("simulations")
+    def _on_generation(self, ga_instance):
+        self.progress_gens.update(1)
 
-    @staticmethod
-    def fitness_function(individual, solution_idx):
+    def _on_stop(self, ga_instance, last_population_fitness):
+        self.progress_sims.reset(ga_instance.sol_per_pop)
+
+    def fitness_function(self, individual, solution_idx):
         """
         Calculate the fitness of an individual based on the sensor data
             and the matrix of movements represented by the individual
@@ -94,8 +91,8 @@ class GeneticAlgorithm:
         # simulation.add_creature(creature_name="bipede")
         fitness = simulation.run()
         logger.debug("Creature fitness: {}".format(fitness))
-        progress.update_pb("simulations", 1)
-        progress.refresh_pb("generations")
+        self.progress_sims.update(1)
+        self.progress_gens.refresh()
         return fitness
 
     def save_sol(self, best_sol):
@@ -110,13 +107,6 @@ class GeneticAlgorithm:
         self.ga.plot_new_solution_rate()
 
     def run(self):
-        progress.create_pb(
-            "generations",
-            total=self.num_generations,
-            desc="Generations",
-            leave=False,
-        )
-
         self.ga.run()
         best_solution, best_fitness, _ = self.ga.best_solution()
         logger.info("Genetic Algorithm ended")
@@ -131,5 +121,5 @@ class GeneticAlgorithm:
         #         )
         logger.info("Best fitness: {}".format(best_fitness))
         self.save_sol(best_solution)
-
-        progress.close_all_pb()
+        self.progress_sims.close()
+        self.progress_gens.close()
