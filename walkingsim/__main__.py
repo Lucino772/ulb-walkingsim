@@ -16,21 +16,6 @@ from walkingsim.algorithms.ga import GeneticAlgorithm
 # Sensor data should be gathered for each step of the simulation
 # giving us more possibility on how to compute the fitness value
 
-# best parameters for our case from similar pygad examples are:
-# population_size=100,
-# num_generations=50,
-# num_parents_mating=4,
-# mutation_percent_genes=10,
-# num_joints=4,
-# parallel_processing=None,
-# init_range_low=-1000,
-# init_range_high=1000,
-# random_mutation_min_val=-1000,
-# random_mutation_max_val=1000,
-# parent_selection_type="tournament",
-# keep_elitism=1,
-# crossover_type="uniform",
-
 
 def main():
     population_size = 100
@@ -54,27 +39,39 @@ def main():
 
     GA = GeneticAlgorithm(
         population_size=20,
-        num_generations=10,
-        num_parents_mating=2,
-        mutation_percent_genes=10,
+        num_generations=100,
+        num_parents_mating=4,
         num_joints=8,
-        # num_steps=60000,
         num_steps=_GENOME_DISCRETE_INTERVALS,
         parallel_processing=None,
-        init_range_low=-1000,  # init range applied to the genes
-        # which in this case are the forces/angles
-        init_range_high=1000,
-        random_mutation_min_val=-1000,
-        random_mutation_max_val=1000,
+        # init_range_low=-1000,  # init range applied to the genes
+        # # which in this case are the forces/angles
+        # init_range_high=1000,
+
         parent_selection_type="tournament",
+        # K_tournament=population_size // 100,
         keep_elitism=population_size // 100,
+
         crossover_type="uniform",
+        # crossover_type="single_point",
+        # crossover_type="two_points",
+        # crossover_type="random",
+
         # UserWarning: Use the 'save_solutions' parameter with caution
         # as it may cause memory overflow when either the number of
         # generations, number of
         # genes, or number of
         # solutions in population is large.
         save_solutions=False,
+
+        mutation_type="adaptive",
+        mutation_percent_genes=(30,1),
+
+        # mutation_type="random",
+        # mutation_by_replacement=True,
+        # random_mutation_min_val=-1000,
+        # random_mutation_max_val=1000,
+
     )
     GA.run()
 

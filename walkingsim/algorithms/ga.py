@@ -22,15 +22,16 @@ class GeneticAlgorithm:
         mutation_percent_genes,
         num_joints,
         num_steps,
-        parallel_processing=None,
-        init_range_low=-1000,
-        init_range_high=1000,
-        random_mutation_min_val=-1000,
-        random_mutation_max_val=1000,
-        parent_selection_type="tournament",
-        keep_elitism=1,
-        crossover_type="uniform",
-        save_solutions=False,
+        parallel_processing,
+        # init_range_low,
+        # init_range_high,
+        # random_mutation_min_val,
+        # random_mutation_max_val,
+        parent_selection_type,
+        keep_elitism,
+        crossover_type,
+        save_solutions,
+        mutation_type,
     ):
         self.population_size = population_size
         self.num_generations = num_generations
@@ -40,10 +41,11 @@ class GeneticAlgorithm:
         self.data_log = []
         self.num_steps = num_steps
         self.parallel_processing = parallel_processing
-        self.init_range_low = init_range_low
-        self.init_range_high = init_range_high
-        self.random_mutation_min_val = random_mutation_min_val
-        self.random_mutation_max_val = random_mutation_max_val
+        # self.init_range_low = init_range_low
+        # self.init_range_high = init_range_high
+        self.mutation_type = mutation_type
+        # self.random_mutation_min_val = random_mutation_min_val
+        # self.random_mutation_max_val = random_mutation_max_val
         self.parent_selection_type = parent_selection_type
         self.keep_elitism = keep_elitism
         self.crossover_type = crossover_type
@@ -62,7 +64,8 @@ class GeneticAlgorithm:
         self.ga = pygad_.GA(
             num_parents_mating=self.num_parents_mating,
             num_generations=self.num_generations,
-            sol_per_pop=self.population_size,
+            sol_per_pop=self.population_size,   # Number of solutions
+            # in the population. if less than population_size, the rest will be filled with random solutions
             num_genes=self.num_joints * self.num_steps,
             mutation_percent_genes=self.mutation_percent_genes,
             fitness_func=self.fitness_function,
@@ -70,14 +73,20 @@ class GeneticAlgorithm:
             on_mutation=self._on_mutation,
             on_stop=self._on_stop,
             parallel_processing=self.parallel_processing,
-            init_range_low=self.init_range_low,
-            init_range_high=self.init_range_high,
-            random_mutation_min_val=self.random_mutation_min_val,
-            random_mutation_max_val=self.random_mutation_max_val,
+            # init_range_low=self.init_range_low,
+            # init_range_high=self.init_range_high,
+
             parent_selection_type=self.parent_selection_type,
             keep_elitism=self.keep_elitism,
             crossover_type=self.crossover_type,
             save_solutions=self.save_solutions,
+            mutation_type="adaptive",
+
+            # mutation_type="random",
+            # mutation_by_replacement=True,
+            # random_mutation_min_val=self.random_mutation_min_val,
+            # random_mutation_max_val=self.random_mutation_max_val,
+
         )
 
         self.progress_sims = tqdm.tqdm(
@@ -168,8 +177,10 @@ class GeneticAlgorithm:
     def plot(self):
         logger.info("Plotting results")
         self.ga.plot_fitness()
-        self.ga.plot_genes()
-        self.ga.plot_new_solution_rate()
+        # self.ga.plot_genes()
+        # self.ga.plot_new_solution_rate()    # Plot the new solution
+        # # rate. The new solution rate is the number of new solutions
+        # # created in the current generation divided by the population size.
 
     def run(self):
         self.ga.run()
@@ -190,7 +201,7 @@ class GeneticAlgorithm:
 
         # logger.info("Max fitness generation index: {}".format(self.ga.
         logger.info("Best fitness: {}".format(best_fitness))
-        # self.plot()
+        self.plot()
         self.save_sol(best_solution, best_fitness)
         self.save_data_log()
         self.progress_sims.close()
