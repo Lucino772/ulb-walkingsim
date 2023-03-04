@@ -123,7 +123,12 @@ class CreatureSuperClass:
     def capture_sensor_data(self):
         # We capture the information from basic sensors (position, rotation, etc.)
         pos = self.__bodies[0].GetPos()
-        self.__sensor_data.append({"position": (pos.x, pos.y, pos.z)})
+        self.__sensor_data.append(
+            {"position": (pos.x, pos.y, pos.z), "link_rotations": {}}
+        )
+        for b in range(len(self.__joints)):
+            rot = self.__joints[b].GetMotorRot()
+            self.__sensor_data[-1]["link_rotations"].update({str(b): rot})
 
         # We compute additional information (distance, total distance, etc.)
         step_distance = 0

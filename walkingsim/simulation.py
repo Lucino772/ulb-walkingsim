@@ -11,6 +11,7 @@ Description:
 """
 
 import abc
+import math
 
 import numpy as np
 import pychrono as chrono
@@ -175,32 +176,36 @@ class ChronoSimulation(Simulation):
     # Run Simulation
     def _compute_step_reward(self):
         sensor_data = self.creature.sensor_data
-        if len(sensor_data) > 0:
-            # The distance is simply the actual distance
-            # from the start point to the current position
-            distance = sensor_data[-1]["distance"]
+        if len(sensor_data) == 0:
+            return 0
+        curr_state = sensor_data[-1]
+        # The distance is simply the actual distance
+        # from the start point to the current position
+        distance = curr_state["distance"]
+        if sensor_data[-1]["position"][0] < sensor_data[0]["position"][0]:
+            distance *= -1
 
-            # The walk straight reward is a value that tells
-            # if the creature is walking straight or not. If the
-            # creature is walking straight the value will be close to 0
-            # FIXME: Why 3 ?
-            walk_straight = -3 * (sensor_data[-1]["position"][2] ** 2)
+        # The walk straight reward is a value that tells
+        # if the creature is walking straight or not. If the
+        # creature is walking straight the value will be close to 0
+        # FIXME: Why 3 ?
+        walk_straight = -3 * (curr_state["position"][2] ** 2)
 
-            # The speed is how much distance the creature did in one step
-            # If the creature went backwards, the speed is negative
-            # this has a negative impact on the fitness value
-            # FIXME: Should we keep the distance positive (absolute value) ?
-            if len(sensor_data) >= 2:
-                speed = (
-                    sensor_data[-1]["distance"] - sensor_data[-2]["distance"]
-                )
-            else:
-                speed = 0
+        # The speed is how much distance the creature did in one step
+        # If the creature went backwards, the speed is negative
+        # this has a negative impact on the fitness value
+        if len(sensor_data) >= 2:
+            speed = curr_state["distance"] - sensor_data[-2]["distance"]
+        else:
+            speed = 0
 
-            reward = distance + walk_straight + speed
-            return reward
+        joint_limit = 0
+        for r in curr_state["link_rotations"].values():
+            if abs(r) >= math.pi / 2:
+                joint_limit -= 1500
 
-        return 0
+        reward = distance + walk_straight + speed + joint_limit
+        return reward
 
     def _simulation_step(self):
         # Pseudocode for this method:
