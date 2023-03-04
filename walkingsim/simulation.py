@@ -194,7 +194,7 @@ class ChronoSimulation(Simulation):
 
         # If the trunk touches the ground, alive_bonus is negative and stops sim
         self.alive_bonus = (
-            +1 if self.creature.get_trunk_contact_force() == 0 else -1000
+            +1 if self.creature.get_trunk_contact_force() == 0 else -1
         )
 
         sensor_data = self.creature.sensor_data
@@ -238,7 +238,7 @@ class ChronoSimulation(Simulation):
             distance
             + walk_straight
             + 2 * speed
-            + (1e-2 * nb_joints_at_limit)
+            + (-1e-2 * nb_joints_at_limit)
             + self.alive_bonus
             - 50 * (height_diff**2)
         )
