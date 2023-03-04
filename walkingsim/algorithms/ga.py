@@ -1,5 +1,7 @@
+import multiprocessing
 import os
 import pickle
+import sys
 
 import pygad as pygad_
 import tqdm
@@ -26,6 +28,11 @@ class GeneticAlgorithm:
         self.num_joints = num_joints
         self.num_steps = ChronoSimulation._GENOME_DISCRETE_INTERVALS
 
+        # Get the number of CPU threads
+        num_threads = multiprocessing.cpu_count() * 2
+        logger.debug("Number of CPU threads: {}", num_threads)
+        print("Number of CPU threads: {}".format(num_threads))
+
         self.ga = pygad_.GA(
             num_parents_mating=self.num_parents_mating,
             num_generations=self.num_generations,
@@ -36,7 +43,11 @@ class GeneticAlgorithm:
             on_generation=self._on_generation,
             on_mutation=self._on_mutation,
             on_stop=self._on_stop,
-            parallel_processing=10,  # quantity of cores to use
+            parallel_processing=["thread", 10],  # quantity of cores to use
+            init_range_low=0,
+            parent_selection_type="tournament",
+            keep_elitism=10,
+            crossover_type="uniform",
         )
 
         self.progress_sims = tqdm.tqdm(
@@ -95,9 +106,20 @@ class GeneticAlgorithm:
         self.progress_gens.refresh()
         return fitness
 
-    def save_sol(self, best_sol):
-        with open("solution.dat", "wb") as fp:
-            pickle.dump(best_sol, fp)
+    def save_sol(self, best_sol, best_fitness):
+        # read the previous best fitness from file fitness.dat
+        with open("fitness.dat", "rb") as fp:
+            if os.path.getsize("fitness.dat") > 0:
+                previous_best_fitness = pickle.load(fp)
+            else:
+                previous_best_fitness = 0
+
+        logger.debug("Previous best fitness: {}", previous_best_fitness)
+        if previous_best_fitness < best_fitness:
+            with open("solution.dat", "wb") as fp:
+                pickle.dump(best_sol, fp)
+            with open("fitness.dat", "wb") as fp:
+                pickle.dump(best_fitness, fp)
 
         logger.info("Best genome was successfully written in solution.dat")
 
@@ -120,6 +142,7 @@ class GeneticAlgorithm:
         #             ":", best_solution[i * self.num_steps + j],
         #         )
         logger.info("Best fitness: {}".format(best_fitness))
-        self.save_sol(best_solution)
+        self.save_sol(best_solution, best_fitness)
+
         self.progress_sims.close()
         self.progress_gens.close()
