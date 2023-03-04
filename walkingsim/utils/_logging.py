@@ -5,7 +5,7 @@
 import os
 
 # Do not show DEBUG messages
-os.environ["LOGURU_LEVEL"] = "INFO"
+os.environ["LOGURU_LEVEL"] = "ERROR"
 
 from loguru import logger
 from tqdm import tqdm

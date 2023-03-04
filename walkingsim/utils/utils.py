@@ -11,7 +11,6 @@ Description:
 """
 
 import math
-from copy import deepcopy
 
 import pychrono as chrono
 
@@ -22,16 +21,19 @@ def distance(a, b):
     )
 
 
-class CustomTorqueFunction(chrono.ChFunction):
-    def __init__(self, forces: list):
+class ChCustomTorqueFunction(chrono.ChFunction_SetpointCallback):
+    def __init__(self, __timestep: float, __forces: list):
         super().__init__()
-        self.__forces = forces
+        self.__timestep = __timestep
+        self.__forces = __forces
+        self.__lasttime = 0
+        self.__steps = 0
 
-    def Clone(self):
-        return deepcopy(self)
+    def SetpointCallback(self, t: float):
+        dt = t - self.__lasttime
+        if dt >= self.__timestep:
+            self.__lasttime = t
+            self.__steps = (self.__steps + 1) % len(self.__forces)
 
-    def Get_y(self, x):
-        # We want to keep x between 0 and len(self.__forces) - 1
-        # => run a cycle multiple times
-        x = int(x) % len(self.__forces)
-        return self.__forces[x]
+        value = self.__forces[self.__steps]
+        return value

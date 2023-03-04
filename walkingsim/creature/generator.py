@@ -18,12 +18,7 @@ import os
 import networkx as nx
 import pychrono as chrono
 
-
-# FIXME: This function should be moved in another module (utils)
-def _distance(a, b):
-    return math.sqrt(
-        (a[0] + b[0]) ** 2 + (a[1] + b[1]) ** 2 + (a[2] + b[2]) ** 2
-    )
+import walkingsim.utils.utils as utils
 
 
 class CreatureGenerator:
@@ -201,7 +196,7 @@ class ChronoCreature:
         distance = 0
         total_distance = 0
         if len(self.__sensor_data) > 1:
-            distance = _distance(
+            distance = utils.distance(
                 self.__sensor_data[-1]["position"],
                 self.__sensor_data[0]["position"],
             )
@@ -210,7 +205,7 @@ class ChronoCreature:
                     prev[0]
                     if prev[1] is None
                     else prev[0]
-                    + _distance(curr["position"], prev[1]["position"]),
+                    + utils.distance(curr["position"], prev[1]["position"]),
                     curr,
                 ),
                 self.__sensor_data,

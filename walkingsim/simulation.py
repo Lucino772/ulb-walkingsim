@@ -18,6 +18,9 @@ import pychrono as chrono
 import pychrono.irrlicht as chronoirr
 from loguru import logger
 
+from walkingsim.creature.creature import Vector
+
+# from walkingsim.creature.bipede import Bipede
 from walkingsim.creature.quadrupede import Quadrupede
 from walkingsim.environment import EnvironmentLoader
 
@@ -48,22 +51,17 @@ class Simulation(abc.ABC):
         self.__environment = self.__loader.load_environment(__env)
         self._visualize = __visualize
         self.__creature = None
-        self.__genome = None
         self.__total_reward = 0
 
-    def add_creature(self, creature_name: str, genome: dict = None):
-        # FIXME: This function can be removed and done in the __init__ method
         if self.__creature is not None:
             logger.error(
                 "Cannot add a new creature to the simulation, one already exists !"
             )
             raise RuntimeError("Creature already exists in simulation")
 
-        # FIXME: Pass the genome when creating the creature
-        new_creature = Quadrupede((0, 1.9, 0))
+        new_creature = Quadrupede(Vector(0, 1.65, 0))
         new_creature.add_to_env(self.environment)
         self.__creature = new_creature
-        self.__genome = genome
         logger.debug(f"Creature '{new_creature}' added to the simulation")
 
     @property
@@ -90,10 +88,6 @@ class Simulation(abc.ABC):
     def creature(self):
         return self.__creature
 
-    @property
-    def genome(self):
-        return self.__genome
-
     def run(self):
         raise NotImplementedError
 
@@ -116,19 +110,6 @@ class ChronoSimulation(Simulation):
                                     genome matrix
     """
 
-    _TIME_STEP = 1e-2
-    _TIME_STEPS_TO_SECOND = 60 // _TIME_STEP
-    _SIM_DURATION_IN_SECS = 5
-    # applying the same force during set timesteps
-    _FORCES_DELAY_IN_TIMESTEPS = 4
-    _GENOME_DISCRETE_INTERVALS = int(
-        (
-            _TIME_STEPS_TO_SECOND
-            * _SIM_DURATION_IN_SECS
-            // _FORCES_DELAY_IN_TIMESTEPS
-        )
-    )
-
     def __init__(
         self,
         __env_datapath: str,
@@ -136,24 +117,59 @@ class ChronoSimulation(Simulation):
         __creatures_datapath: str,
         __visualize: bool = False,
         __movement_gene=None,
+        _TIME_STEP=1e-2,
+        _SIM_DURATION_IN_SECS=5,
+        # applying the same force during set timesteps
+        _FORCES_DELAY_IN_TIMESTEPS=4,
     ) -> None:
         super().__init__(
             "chrono", __env_datapath, __env, __creatures_datapath, __visualize
         )
+        self._TIME_STEP = _TIME_STEP
+        self._SIM_DURATION_IN_SECS = _SIM_DURATION_IN_SECS
+        # applying the same force during set timesteps
+        self._FORCES_DELAY_IN_TIMESTEPS = _FORCES_DELAY_IN_TIMESTEPS
+        self._TIME_STEPS_TO_SECOND = 60 // _TIME_STEP
+        self._GENOME_DISCRETE_INTERVALS = int(
+            (
+                self._TIME_STEPS_TO_SECOND
+                * _SIM_DURATION_IN_SECS
+                // _FORCES_DELAY_IN_TIMESTEPS
+            )
+        )
+
+        # used for reward and sim end test
+        self.alive_bonus = 0
+
+        self._show_initial_log()
+
         self.__renderer = None
         if self._visualize is True:
             # FIXME use ChIrrApp to have a GUI and tweak parameters within rendering
             self.__renderer = chronoirr.ChVisualSystemIrrlicht()
 
-        # FIXME: Pass the creature name
-        self.add_creature("")
+        self._add_force_func_to_creature(__movement_gene)
 
-        # Set forces on creature
-        # FIXME: Adapt based on creature
-        movement_matrix = np.array(__movement_gene).reshape(
-            4, self._GENOME_DISCRETE_INTERVALS
+    def _show_initial_log(self):
+        logger.debug(f"Time step: {self._TIME_STEP}, ")
+        logger.debug(f"Time steps to second: {self._TIME_STEPS_TO_SECOND}, ")
+        logger.debug(
+            f"Simulation duration in seconds: {self._SIM_DURATION_IN_SECS}, "
         )
-        self.creature.set_forces(movement_matrix)
+        logger.debug(
+            f"Forces delay in timesteps: {self._FORCES_DELAY_IN_TIMESTEPS}, "
+        )
+        logger.debug(
+            f"Genome discrete intervals: "
+            f"{self._GENOME_DISCRETE_INTERVALS}, "
+        )
+
+    def _add_force_func_to_creature(self, movement_gene):
+        nbr = self.creature.joints_nbr()
+        movement_matrix = np.array(movement_gene).reshape(
+            nbr, self._GENOME_DISCRETE_INTERVALS
+        )
+        self.creature.set_forces(movement_matrix, self._TIME_STEP)
 
     # Visualize
     def _render_setup(self):
@@ -175,6 +191,12 @@ class ChronoSimulation(Simulation):
 
     # Run Simulation
     def _compute_step_reward(self):
+
+        # If the trunk touches the ground, alive_bonus is negative and stops sim
+        self.alive_bonus = (
+            +1 if self.creature.get_trunk_contact_force() == 0 else -1000
+        )
+
         sensor_data = self.creature.sensor_data
         if len(sensor_data) == 0:
             return 0
@@ -195,16 +217,31 @@ class ChronoSimulation(Simulation):
         # If the creature went backwards, the speed is negative
         # this has a negative impact on the fitness value
         if len(sensor_data) >= 2:
-            speed = curr_state["distance"] - sensor_data[-2]["distance"]
+            speed = (
+                curr_state["distance"] - sensor_data[-2]["distance"]
+            ) / self._TIME_STEP
         else:
             speed = 0
 
-        joint_limit = 0
-        for r in curr_state["link_rotations"].values():
-            if abs(r) >= math.pi / 2:
-                joint_limit -= 1500
+        # Penalties for discouraging the joints to be stuck at their limit
+        nb_joints_at_limit = self.creature.get_nb_joints_at_limit()
 
-        reward = distance + walk_straight + speed + joint_limit
+        # Penalties for going lower than their current height
+        try:
+            height_diff = (
+                curr_state["position"][1] - sensor_data[-2]["position"][1]
+            )
+        except IndexError:
+            height_diff = 0
+
+        reward = (
+            distance
+            + walk_straight
+            + 2 * speed
+            + (1e-2 * nb_joints_at_limit)
+            + self.alive_bonus
+            - 50 * (height_diff**2)
+        )
         return reward
 
     def _simulation_step(self):
@@ -236,14 +273,7 @@ class ChronoSimulation(Simulation):
         return current_sim_time > self._SIM_DURATION_IN_SECS
 
     def is_creature_fallen(self):
-        # FIXME hacky. Is there a way to detect collision between shapes?
-        try:
-            trunk_y = self.creature.sensor_data[-1]["position"][1]
-        except IndexError:
-            trunk_y = 1
-
-        height_limit = self.creature.trunk_dim[2] / 2
-        return trunk_y < 1.2 * height_limit
+        return self.alive_bonus < 0
 
     def run(self):
         logger.debug("Starting simulation")

@@ -9,41 +9,33 @@ Authors:
 Description:
     Class for basic quadruped creature.
 """
+import math
 
-from walkingsim.creature.creature import CreatureSuperClass as Creature
+from walkingsim.creature.creature import Creature, Vector
 
 
 class Quadrupede(Creature):
-    """
-    Class for a basic quadrupede.
+    """Class for a basic quadrupede."""
 
-    Class attributes:
-        collision_family
-        trunk_dimensions
-        legs_dimensions
+    def __init__(self, pos: Vector) -> None:
+        super().__init__(root_size=Vector(1.0, 0.5, 0.5), root_pos=pos)
 
-    Attributes:
-        joints
-        bodies
-        sensor_data
-    """
+    def create(self):
+        yoffset = 0.1
+        xoffset = 0.2
 
-    def __init__(self, pos: tuple) -> None:
-        super().__init__(pos)
-
-    def _create_legs(self):
-        x_trunk = self.pos.x
-        x_back_legs = x_trunk - 0.8 * (self.trunk_dim[0] / 2)
-        x_front_legs = x_trunk + 0.8 * (self.trunk_dim[0] / 2)
-
-        y_trunk = self.pos.y
-        y_legs = y_trunk - 1.8 * (self.trunk_dim[1] / 2)
-
-        z_trunk = self.pos.z
-        z_left_legs = z_trunk + (self.trunk_dim[2] / 2)
-        z_right_legs = z_trunk - (self.trunk_dim[2] / 2)
-
-        self._create_single_leg(x_front_legs, y_legs, z_left_legs)
-        self._create_single_leg(x_front_legs, y_legs, z_right_legs)
-        self._create_single_leg(x_back_legs, y_legs, z_left_legs)
-        self._create_single_leg(x_back_legs, y_legs, z_right_legs)
+        for xfactor, zfactor in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+            x = (self.root.size.x * xfactor / 2) + (xoffset * -xfactor)
+            z = self.root.size.z * zfactor / 2
+            (
+                self.root.branch(size=Vector(0.3, 0.7, 0.15))  # top leg
+                .join(
+                    relative_pos=Vector(x, yoffset, z),
+                    constraints_z=[-math.pi / 3, math.pi / 3],
+                    motor="torque",
+                )
+                .branch(size=Vector(0.3, 0.7, 0.15))  # bottom leg
+                .join(constraints_z=[-0.05, math.pi / 2], motor="torque")
+                .branch(size=Vector(0.4, 0.1, 0.4))  # foot
+                .join()
+            )
