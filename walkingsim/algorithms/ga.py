@@ -153,46 +153,55 @@ class GeneticAlgorithm:
 
         return fitness
 
-    def save_sol(self, best_sol, best_fitness):
-
-        with open("solution.dat", "wb") as fp:
-            pickle.dump(best_sol, fp)
-
-        logger.info("genome was successfully written in "
-                    "solution.dat")
-        print("genome was successfully written in "
-              "solution.dat")
-
-        with open("fitness.dat", "wb") as fp:
-            pickle.dump(best_fitness, fp)
-        print("fitness was successfully written in "
-                  "solution.dat")
-
-        # read the previous best fitness from file fitness.dat
+    def save_sol(self, solutions, best_sol, best_fitness):
+        # from solutions
+        #   save best if better than previous
+        #       read the previous best fitness from file fitness.dat
         with open("fitness_best.dat", "rb") as fp:
             if os.path.getsize("fitness_best.dat") > 0:
                 previous_best_fitness = pickle.load(fp)
             else:
                 previous_best_fitness = 0
             logger.info("Previous best fitness: {}",
-                      previous_best_fitness)
+                        previous_best_fitness)
 
         if previous_best_fitness < best_fitness:
-            print("previous best fitness: ", previous_best_fitness,"< best fitness: ", best_fitness)
+            print("previous best fitness: ", previous_best_fitness,
+                  "< best fitness: ", best_fitness)
+
+            # save all solutions best
+            with open("solutions_all_best.dat", "wb") as fp:
+                pickle.dump(solutions, fp)
+            print("Best genomes was successfully written in "
+                  "solutions_all_best.dat")
+
             with open("solution_best.dat", "wb") as fp:
                 pickle.dump(best_sol, fp)
-
-            logger.info("Best genome was successfully written in "
-                        "solution_best.dat")
             print("Best genome was successfully written in "
                   "solution_best.dat")
 
-            np.savetxt('best_solution.txt', best_sol)
-            print("best solution was successfully written in "
-                  "best_solution.txt")
-
             with open("fitness_best.dat", "wb") as fp:
                 pickle.dump(best_fitness, fp)
+
+        # current
+        with open("previous_run_solution.dat", "wb") as fp:
+            pickle.dump(best_sol, fp)
+        print("Best current genome was successfully written as "
+              "current in "
+              "previous_run_solution.dat")
+
+        with open("previous_run_solutions.dat", "wb") as fp:
+            pickle.dump(solutions, fp)
+        print("All current genomes were successfully written as "
+              "current in "
+              "previous_run_solutions.dat")
+
+        with open("fitness.dat", "wb") as fp:
+            pickle.dump(best_fitness, fp)
+        print("Current fitness was successfully written as current in "
+                  "previous_run_solution.dat")
+
+
 
     def save_data_log(self):
         with open("data_log.csv", "w") as fp:

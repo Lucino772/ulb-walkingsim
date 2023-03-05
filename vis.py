@@ -9,7 +9,7 @@ from walkingsim.simulation import ChronoSimulation
 
 
 def main():
-    with open("solution.dat", "rb") as fp:
+    with open("previous_run_solution.dat", "rb") as fp:
         mv_matrice = pickle.load(fp)
 
     with open("fitness.dat", "rb") as fp:

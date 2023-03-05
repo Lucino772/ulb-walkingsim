@@ -1,3 +1,4 @@
+import walkingsim.utils._logging  # Configure logging
 import multiprocessing
 import os
 import pickle
@@ -24,6 +25,10 @@ from walkingsim.algorithms.ga import GeneticAlgorithm
 
 
 def main():
+    # initial_population_origin = "previous"
+    initial_population_origin = "all time"
+    # initial_population_sample = "best"
+    initial_population_sample = "all"
     population_size = 500
 
     _TIME_STEP = 1e-2
@@ -46,19 +51,32 @@ def main():
     # logger.info("Number of CPU threads: {}", threads_quantity)
     print("Number of CPU threads: {}", threads_quantity)
 
-    with open("solution.dat", "rb") as fp:
-        if os.path.getsize("solution.dat") > 0:
-            previous_solution = pickle.load(fp)
+    file = ""
+
+    if initial_population_origin == "previous":
+        if initial_population_sample == "best":
+            file = "previous_run_solution.dat"
+        elif initial_population_sample == "all":
+            file = "previous_run_solutions.dat"
+    elif initial_population_origin == "all time":
+        if initial_population_sample == "best":
+            file = "solution_best.dat"
+        elif initial_population_sample == "all":
+            file = "solutions_all_best.dat"
+
+    with open(file, "rb") as fp:
+        if os.path.getsize(file) > 0:
+            initial_population = pickle.load(fp)
         else:
-            previous_solution = None
+            initial_population = 0
 
     GA = GeneticAlgorithm(
-        initial_population=[previous_solution]*population_size,
+        initial_population=[initial_population]*population_size,
         population_size=population_size,
         sol_per_pop=population_size,
         num_steps=_GENOME_DISCRETE_INTERVALS,
 
-        num_generations=2,
+        num_generations=200,
         num_parents_mating=4,
         num_joints=8,
         # parallel_processing=None,
