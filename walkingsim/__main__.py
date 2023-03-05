@@ -1,4 +1,10 @@
-import walkingsim.utils._logging  # Configure logging
+import multiprocessing
+import os
+import pickle
+
+
+# from loguru import logger
+
 from walkingsim.algorithms.ga import GeneticAlgorithm
 
 # The programs has 2 steps:
@@ -18,7 +24,7 @@ from walkingsim.algorithms.ga import GeneticAlgorithm
 
 
 def main():
-    population_size = 100
+    population_size = 500
 
     _TIME_STEP = 1e-2
     # _SIM_DURATION_IN_SECS = 50   # ValueError: cannot reshape array of
@@ -36,17 +42,29 @@ def main():
             // _FORCES_DELAY_IN_TIMESTEPS
         )
     )
+    threads_quantity = multiprocessing.cpu_count() * 2
+    # logger.info("Number of CPU threads: {}", threads_quantity)
+    print("Number of CPU threads: {}", threads_quantity)
+
+    with open("solution.dat", "rb") as fp:
+        if os.path.getsize("solution.dat") > 0:
+            previous_solution = pickle.load(fp)
+        else:
+            previous_solution = None
 
     GA = GeneticAlgorithm(
-        population_size=20,
-        num_generations=100,
+        initial_population=[previous_solution]*population_size,
+        population_size=population_size,
+        sol_per_pop=population_size,
+        num_steps=_GENOME_DISCRETE_INTERVALS,
+
+        num_generations=2,
         num_parents_mating=4,
         num_joints=8,
-        num_steps=_GENOME_DISCRETE_INTERVALS,
-        parallel_processing=None,
-        # init_range_low=-1000,  # init range applied to the genes
-        # # which in this case are the forces/angles
-        # init_range_high=1000,
+        # parallel_processing=None,
+        parallel_processing=24,
+        init_range_low=-1000,
+        init_range_high=1000,
 
         parent_selection_type="tournament",
         # K_tournament=population_size // 100,
@@ -65,13 +83,12 @@ def main():
         save_solutions=False,
 
         mutation_type="adaptive",
-        mutation_percent_genes=(30,1),
+        mutation_percent_genes=(40,10),
 
         # mutation_type="random",
         # mutation_by_replacement=True,
         # random_mutation_min_val=-1000,
         # random_mutation_max_val=1000,
-
     )
     GA.run()
 

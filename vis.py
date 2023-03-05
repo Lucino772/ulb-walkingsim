@@ -1,5 +1,7 @@
+import os
 import pickle
 import sys
+from loguru import logger
 
 import numpy as np
 
@@ -9,6 +11,14 @@ from walkingsim.simulation import ChronoSimulation
 def main():
     with open("solution.dat", "rb") as fp:
         mv_matrice = pickle.load(fp)
+
+    with open("fitness.dat", "rb") as fp:
+        if os.path.getsize("fitness.dat") > 0:
+            previous_best_fitness = pickle.load(fp)
+        else:
+            previous_best_fitness = 0
+        logger.info("Fitness: {}",
+                    previous_best_fitness)
 
     environment, creature_name = "default", "bipede"
     if len(sys.argv) >= 2:

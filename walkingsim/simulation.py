@@ -235,11 +235,11 @@ class ChronoSimulation(Simulation):
             height_diff = 0
 
         reward = (
-            distance
+            distance * 10
             + walk_straight
             + 2 * speed
-            + (-1e-2 * nb_joints_at_limit)
-            + self.alive_bonus
+            + (-10 * nb_joints_at_limit)
+            + self.alive_bonus * 100
             - 50 * (height_diff**2)
         )
         return reward
