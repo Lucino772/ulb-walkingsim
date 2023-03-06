@@ -2,7 +2,6 @@ import csv
 import os
 import pickle
 
-import numpy as np
 import pygad as pygad_
 import tqdm
 from loguru import logger
@@ -201,8 +200,6 @@ class GeneticAlgorithm:
         print("Current fitness was successfully written as current in "
                   "previous_run_solution.dat")
 
-
-
     def save_data_log(self):
         with open("data_log.csv", "w") as fp:
             writer = csv.writer(fp)
@@ -211,6 +208,7 @@ class GeneticAlgorithm:
 
     def plot(self):
         logger.info("Plotting results")
+        print("Plotting results")
         self.ga.plot_fitness()
         # self.ga.plot_genes()
         # self.ga.plot_new_solution_rate()    # Plot the new solution
@@ -228,18 +226,10 @@ class GeneticAlgorithm:
         logger.info("Genetic Algorithm ended")
         logger.info("Best genome: {}".format(best_solution))
         print("Best genome: {}".format(best_solution))
-        # print the best solution
-        # for i in range(self.num_joints):
-        #     print("Joint {}:", i)
-        #     for j in range(self.num_steps):
-        #         print(
-        #             "Step", j,
-        #             ":", best_solution[i * self.num_steps + j],
-        #         )
 
         logger.info("Best fitness: {}".format(best_fitness))
         print("Best fitness: {}".format(best_fitness))
-        self.save_sol(best_solution, best_fitness)
+        self.save_sol(solutions, best_solution, best_fitness)
 
         self.save_data_log()
         self.progress_sims.close()

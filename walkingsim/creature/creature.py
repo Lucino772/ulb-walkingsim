@@ -10,7 +10,6 @@ Description:
     Class for basic bipede creature.
 """
 
-import math
 import typing as t
 from collections import namedtuple
 

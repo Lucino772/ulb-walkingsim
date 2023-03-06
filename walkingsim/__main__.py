@@ -25,6 +25,7 @@ from walkingsim.algorithms.ga import GeneticAlgorithm
 
 
 def main():
+
     # initial_population_origin = "previous"
     initial_population_origin = "all time"
     # initial_population_sample = "best"
