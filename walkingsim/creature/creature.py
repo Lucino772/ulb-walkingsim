@@ -57,6 +57,10 @@ class CreatureBranch:
         return self.__position
 
     @property
+    def family(self):
+        return self.__family
+
+    @property
     def parent(self):
         return self.__parent
 
@@ -92,6 +96,9 @@ class CreatureBranch:
         body.GetCollisionModel().SetFamilyMaskNoCollisionWithFamily(
             self.__family
         )
+        for i in range(15):
+            if i != self.__family:
+                body.GetCollisionModel().SetFamilyMaskDoCollisionWithFamily(i)
 
         chrono_pos = chrono.ChVectorD(
             self.__position.x, self.__position.y, self.__position.z
@@ -100,12 +107,38 @@ class CreatureBranch:
 
         return body
 
-    def branch(self, size: Vector):
+    def branch(self, size: Vector, family: int=None):
+        if family is None:
+            family = self.__family
         _child = CreatureBranch(
-            size, self.__material, self.__family, parent=self
+            size, self.__material, family, parent=self
         )
         self.__childs.append(_child)
         return _child
+
+    def collision(
+        self,
+        family: t.Optional[int]=None,
+        nocollision: t.Optional[t.Sequence[int]]=None,
+        docollision: t.Optional[t.Sequence[int]]=None
+    ):
+        if family is not None:
+            self.__body.GetCollisionModel().SetFamily(family)
+            self.__body.GetCollisionModel().SetFamilyMaskNoCollisionWithFamily(family)
+            for i in range(15):
+                if i != family:
+                    self.__body.GetCollisionModel().SetFamilyMaskDoCollisionWithFamily(i)
+            self.__family = family
+
+        if nocollision is not None:
+            for fam in nocollision:
+                self.__body.GetCollisionModel().SetFamilyMaskNoCollisionWithFamily(fam)
+
+        if docollision is not None:
+            for fam in docollision:
+                self.__body.GetCollisionModel().SetFamilyMaskDoCollisionWithFamily(fam)
+
+        return self
 
     def join(
         self,

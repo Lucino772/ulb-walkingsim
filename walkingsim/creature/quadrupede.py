@@ -10,7 +10,6 @@ Description:
     Class for basic quadruped creature.
 """
 import math
-
 from walkingsim.creature.creature import Creature, Vector
 
 
@@ -24,11 +23,12 @@ class Quadrupede(Creature):
         yoffset = 0.1
         xoffset = 0.2
 
-        for xfactor, zfactor in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+        for i, (xfactor, zfactor) in enumerate([(1, 1), (1, -1), (-1, 1), (-1, -1)], start=1):
             x = (self.root.size.x * xfactor / 2) + (xoffset * -xfactor)
             z = self.root.size.z * zfactor / 2
             (
                 self.root.branch(size=Vector(0.3, 0.7, 0.15))  # top leg
+                # .collision(family=self.root.family+i, nocollision=[self.root.family])
                 .join(
                     relative_pos=Vector(x, yoffset, z),
                     constraints_z=[-math.pi / 3, math.pi / 3],
