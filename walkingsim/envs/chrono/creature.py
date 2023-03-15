@@ -12,6 +12,7 @@ class ChronoCreatureBody(_CreatureBody):
     _MATERIAL.SetFriction(0.5)
     _MATERIAL.SetDampingF(0.2)
     _BODY_COLOR = chrono.ChColor(0.5, 0.7, 0.5)
+    _TEXTURE = "resources/materials/skin/hard_skin.jpg"
 
     def _create_body(self):
         self._body = chrono.ChBodyEasyBox(
@@ -28,6 +29,9 @@ class ChronoCreatureBody(_CreatureBody):
         self.collision(family=self._family, nocollision=[self._family])
         chrono_pos = _tuple_to_chrono_vector(self._position)
         self._body.SetPos(chrono_pos)
+        self._body.GetVisualShape(0).SetTexture(
+            self._TEXTURE, scale_x=5, scale_y=5
+        )
 
     # Methods
     def collision(
