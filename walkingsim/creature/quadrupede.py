@@ -10,32 +10,46 @@ Description:
     Class for basic quadruped creature.
 """
 import math
-from walkingsim.creature.creature import Creature, Vector
+import typing as t
+
+from walkingsim.creature.creature import Creature, _CreatureBody
 
 
 class Quadrupede(Creature):
     """Class for a basic quadrupede."""
 
-    def __init__(self, pos: Vector) -> None:
-        super().__init__(root_size=Vector(1.0, 0.5, 0.5), root_pos=pos)
+    def __init__(
+        self, body_cls: t.Type[_CreatureBody], root_pos: tuple = None
+    ) -> None:
+        super().__init__(body_cls, (1.0, 0.5, 0.5), root_pos)
 
     def create(self):
-        yoffset = 0.1
+        yoffset = (-self.root.size[1] / 2) + 0.01
         xoffset = 0.2
 
-        for i, (xfactor, zfactor) in enumerate([(1, 1), (1, -1), (-1, 1), (-1, -1)], start=1):
-            x = (self.root.size.x * xfactor / 2) + (xoffset * -xfactor)
-            z = self.root.size.z * zfactor / 2
+        for i, (xfactor, zfactor) in enumerate(
+            [(1, 1), (1, -1), (-1, 1), (-1, -1)], start=1
+        ):
+            x = (self.root.size[0] * xfactor / 2) + (xoffset * -xfactor)
+            z = self.root.size[2] * zfactor / 2
             (
-                self.root.branch(size=Vector(0.3, 0.7, 0.15))  # top leg
+                self.root.branch(
+                    size=(0.3, 0.7, 0.15), relpos=(x, yoffset, z)
+                )  # top leg
                 # .collision(family=self.root.family+i, nocollision=[self.root.family])
                 .join(
-                    relative_pos=Vector(x, yoffset, z),
+                    relpos=(0, 0.7 / 2, 0),
                     constraints_z=[-math.pi / 3, math.pi / 3],
                     motor="torque",
                 )
-                .branch(size=Vector(0.3, 0.7, 0.15))  # bottom leg
-                .join(constraints_z=[-0.05, math.pi / 2], motor="torque")
-                .branch(size=Vector(0.4, 0.1, 0.4))  # foot
-                .join()
+                .branch(
+                    size=(0.3, 0.7, 0.15), relpos=(0, -0.7, 0)
+                )  # bottom leg
+                .join(
+                    relpos=(0, 0.7 / 2, 0),
+                    constraints_z=[-0.05, math.pi / 2],
+                    motor="torque",
+                )
+                .branch(size=(0.4, 0.1, 0.4), relpos=(0, -0.4, 0))  # foot
+                .join(relpos=(0, 0.1 / 2, 0))
             )

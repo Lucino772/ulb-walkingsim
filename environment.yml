@@ -3,13 +3,18 @@ channels:
   - https://conda.anaconda.org/intel
   - https://conda.anaconda.org/projectchrono
   - https://conda.anaconda.org/conda-forge
+  - https://conda.anaconda.org/pytorch
 dependencies:
   - python=3.9
-  - numpy=1.23
+  - numpy=1.24
   - irrlicht=1.8
   - pychrono=7.0
-  - networkx=2.8
   - loguru=0.6
+  - pytorch
+  - stable-baselines3=1.5 
+  - gymnasium=0.27.1
+  - tqdm=4.65.0
+  - rich=13.3.2
   - pip
   - pip:
     - pygad==2.19.1
