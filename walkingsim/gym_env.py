@@ -4,6 +4,7 @@ import gymnasium as gym
 import numpy as np
 
 from walkingsim.envs.chrono import ChronoEnvironment
+from walkingsim.fitness import AliveBonusFitness
 
 
 class GymEnvironment(gym.Env):
@@ -21,14 +22,25 @@ class GymEnvironment(gym.Env):
         self.__properties = properties
         self.render_mode = render_mode
 
+        # FIXME: Adapt the observation spaces based on the selected fitness
         self.observation_space = gym.spaces.Dict(
-            {"distance": gym.spaces.Box(low=-1000, high=1000)}
+            {
+                "forward_bonus": gym.spaces.Box(low=-100, high=100),
+                "alive_bonus": gym.spaces.Box(low=0, high=1000),
+                "speed": gym.spaces.Box(low=-5, high=5),
+                "speed_gap": gym.spaces.Box(low=-10, high=10),
+                "height_diff": gym.spaces.Box(low=-50, high=50),
+                "walk_straight": gym.spaces.Box(low=-50, high=50),
+            }
         )
         self.action_space = gym.spaces.Box(low=-1, high=1, shape=(8,))
         self.gain = 1000
 
         self.__environment = ChronoEnvironment(render_mode == "human")
-        self.__is_creature_fallen = False
+        self.__fitness = AliveBonusFitness(
+            self._SIM_DURATION_IN_SECS, self._TIME_STEP
+        )
+        self.__is_done = False
         self.__current_step = 0
 
         self.__reward_props = defaultdict(float)
@@ -43,11 +55,26 @@ class GymEnvironment(gym.Env):
         return self.__reward
 
     def _get_obs(self):
+        # FIXME: Adapt based on the selected fitness
         return {
-            "distance": np.array(
-                [self.__environment.observations[-1]["distance"]],
-                dtype=np.float32,
-            )
+            "forward_bonus": np.array(
+                [self.__reward_props["forward_bonus"]], dtype=np.float32
+            ),
+            "alive_bonus": np.array(
+                [self.__reward_props["alive_bonus"]], dtype=np.float32
+            ),
+            "speed": np.array(
+                [self.__reward_props["speed"]], dtype=np.float32
+            ),
+            "speed_gap": np.array(
+                [self.__reward_props["speed_gap"]], dtype=np.float32
+            ),
+            "height_diff": np.array(
+                [self.__reward_props["height_diff"]], dtype=np.float32
+            ),
+            "walk_straight": np.array(
+                [self.__reward_props["walk_straight"]], dtype=np.float32
+            ),
         }
 
     def _get_info(self):
@@ -56,7 +83,7 @@ class GymEnvironment(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
         self.__environment.reset(self.__properties)
-        self.__is_creature_fallen = False
+        self.__is_done = False
         self.__reward = None
         self.__reward_props.clear()
 
@@ -66,10 +93,9 @@ class GymEnvironment(gym.Env):
 
     def step(self, action):
         self.__environment.step(action * self.gain, self._TIME_STEP)
-        self.__reward = self._compute_step_reward()
+        self.__reward = self._compute_step_reward(action)
         observation = self._get_obs()
         info = self._get_info()
-        self.render()
         return observation, self.__reward, self.is_over(), self.is_over(), info
 
     def render(self):
@@ -79,51 +105,24 @@ class GymEnvironment(gym.Env):
         pass
 
     # private methods
-    def _compute_step_reward(self):
+    def _compute_step_reward(self, forces):
         observations = self.__environment.observations
         self.__current_step += 1
         if len(observations) == 0:
             return 0
 
         last_observations = observations[-1]
-
-        # If the trunk touches the ground, alive_bonus is negative and stops sim
-        if (
-            not last_observations["trunk_hit_ground"]
-            and not last_observations["legs_hit_ground"]
-        ):
-            self.__reward_props["alive_bonus"] += 1
-        else:
-            self.__reward_props["alive_bonus"] -= 1
-            self.__is_creature_fallen = True
-
-        # Penalties for discouraging the joints to be stuck at their limit
-        self.__reward_props["joints_at_limits"] += (
-            -0.01 * last_observations["joints_at_limits"]
+        self.__fitness.compute(
+            last_observations,
+            observations,
+            self.__current_step,
+            forces,
+            self.__environment.time,
         )
-
-        # Values like the distance and speed will simply replace the one from
-        # the previous observations instead of being added. The reward is then
-        # calculated by adding all the values from the __reward_props attribute.
-        # Other value like the height diff and walk_straight also follow the same
-        # logic.
-        self.__reward_props["distance"] = last_observations["distance"] * 100
-        self.__reward_props["speed"] = (
-            self.__reward_props["distance"] / self.__environment.time
-        )
-        self.__reward_props["height_diff"] = (
-            -50
-            * (
-                last_observations["position"][1]
-                - observations[0]["position"][1]
-            )
-            ** 2
-        )
-        self.__reward_props["walk_straight"] = -3 * (
-            last_observations["position"][2] ** 2
-        )
-
-        return sum(self.__reward_props.values())
+        self.__reward_props.clear()
+        self.__reward_props.update(self.__fitness.props)
+        self.__is_done = self.__fitness.done
+        return self.__fitness.fitness
 
     def _is_time_limit_reached(self):
         return self.__environment.time > self._SIM_DURATION_IN_SECS
@@ -132,7 +131,7 @@ class GymEnvironment(gym.Env):
         """This function returns wether or not the simulation is done"""
         is_over = False
 
-        if self._is_time_limit_reached() or self.__is_creature_fallen:
+        if self._is_time_limit_reached() or self.__is_done:
             is_over = True
 
         return is_over
