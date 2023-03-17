@@ -18,6 +18,9 @@ from walkingsim.creature.creature import Creature, _CreatureBody
 class Quadrupede(Creature):
     """Class for a basic quadrupede."""
 
+    _CREATURE_HEIGHT = 1.65
+    _CREATURE_MOTORS = 8
+
     def __init__(
         self, body_cls: t.Type[_CreatureBody], root_pos: tuple = None
     ) -> None:

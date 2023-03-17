@@ -1,5 +1,5 @@
 import csv
-import datetime
+import datetime as dt
 import os
 import pickle
 import re
@@ -9,31 +9,28 @@ from loguru import logger
 
 
 class DataManager:
-    def __init__(self):
-        # TODO utiliser os.path pour cross-platform
-        self.__root_dir = "solutions/"
-        self.__data_dir = self.__root_dir + self._generate_data_dirname()
-        self.__log_dir = self.__data_dir + "logs/"
-        self._create_data_dir()
+    def __init__(
+        self, group: str, date: str = None, fail_if_exists: bool = True
+    ):
+        if date is None:
+            date = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+        self.__date = date
+
+        self.__root_dir = os.path.join("solutions", group)
+        self.__data_dir = os.path.join(self.__root_dir, date)
+        self.__log_dir = os.path.join(self.__data_dir, "logs")
+
+        if fail_if_exists:
+            self._create_data_dir()
 
     @property
-    def root_dir(self):
-        return self.__root_dir
-
-    @staticmethod
-    def _generate_data_dirname():
-        """
-        Format: YYYYMMDD-HHMMSS
-        """
-        date_now = str(datetime.datetime.now())
-        date_now = re.sub("\..*|-|:", "", date_now)
-        date_now = re.sub(" ", "-", date_now)
-
-        return date_now + "/"
+    def date(self):
+        return self.__date
 
     def _create_data_dir(self):
         try:
-            os.mkdir(self.__data_dir)
+            os.makedirs(self.__data_dir)
         except FileExistsError:
             logger.error(f"The directory {self.__data_dir} already exists")
             sys.exit()
@@ -45,21 +42,48 @@ class DataManager:
         else:
             os.mkdir(self.__log_dir)
 
+    # path
+    def get_local_path(self, filename: str):
+        return os.path.join(self.__data_dir, filename)
+
+    def get_global_path(self, filename: str):
+        return os.path.join(self.__root_dir, filename)
+
+    # save
     def save_local_dat_file(self, filename: str, obj):
-        with open(self.__data_dir + filename, "wb") as fp:
+        filepath = self.get_local_path(filename)
+        with open(filepath, "wb") as fp:
             pickle.dump(obj, fp)
-            logger.info(f"Saved {obj} in {self.__data_dir}{filename}")
+            logger.info(f"Saved {obj} in {filepath}")
 
     def save_global_dat_file(self, filename: str, obj):
-        with open(self.__root_dir + filename, "wb") as fp:
+        filepath = self.get_global_path(filename)
+        with open(filepath, "wb") as fp:
             pickle.dump(obj, fp)
-            logger.info(f"Saved {obj} in {self.__data_dir}{filename}")
+            logger.info(f"Saved {obj} in {filepath}")
 
     def save_log_file(self, filename: str, headers, data):
-        file_path = self.__log_dir + filename
+        file_path = os.path.join(self.__log_dir, filename)
         with open(file_path, "a", newline="") as csvfile:
             fieldnames = headers
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             if os.path.getsize(file_path) == 0:
                 writer.writeheader()
             writer.writerow(data)
+
+    # load
+    def load_local_dat_file(self, filename: str):
+        filepath = self.get_local_path(filename)
+        with open(filepath, "rb") as fp:
+            obj = pickle.load(fp)
+            logger.info(f"Loaded {obj} in {filepath}")
+
+        return obj
+
+    def load_global_dat_file(self, filename: str):
+        filepath = self.get_global_path(filename)
+        with open(filepath, "rb") as fp:
+            obj = pickle.load(fp)
+            logger.info(f"Loaded {obj} in {filepath}")
+
+        return obj

@@ -2,6 +2,7 @@ import math
 
 import pychrono as chrono
 
+from walkingsim.creature.bipede import Bipede
 from walkingsim.creature.quadrupede import Quadrupede
 from walkingsim.envs.chrono.creature import ChronoCreatureBody
 from walkingsim.envs.chrono.utils import _tuple_to_chrono_vector
@@ -18,8 +19,13 @@ class ChCustomTorqueFunction(chrono.ChFunction_SetpointCallback):
 
 
 class ChronoEnvironment:
-    def __init__(self, visualize: bool = False):
+    def __init__(self, visualize: bool = False, creature: str = "quadrupede"):
         self.__environment = chrono.ChSystemNSC()
+        if creature == "quadrupede":
+            self.__creature_cls = Quadrupede
+        else:
+            self.__creature_cls = Bipede
+
         self.__creature = None
 
         self.__visualize = visualize
@@ -38,11 +44,18 @@ class ChronoEnvironment:
 
     @property
     def creature_shape(self):
-        return len(self.__creature.motors())
+        return self.__creature_cls._CREATURE_MOTORS
 
     @property
     def time(self):
         return self.__environment.GetChTime()
+
+    @property
+    def closed(self):
+        if self.__visualizer:
+            return not self.__visualizer.check()
+
+        return False
 
     def reset(self, properties: dict):
         self.__environment.Clear()
@@ -77,7 +90,9 @@ class ChronoEnvironment:
         self.__environment.Add(ground)
 
         # Add creature
-        self.__creature = Quadrupede(ChronoCreatureBody, (0, 1.65, 0))
+        self.__creature = self.__creature_cls(
+            ChronoCreatureBody, (0, self.__creature_cls._CREATURE_HEIGHT, 0)
+        )
         for body in self.__creature.bodies():
             self.__environment.Add(body)
         for joint in self.__creature.motors():
@@ -102,6 +117,10 @@ class ChronoEnvironment:
         if self.__visualizer is not None:
             self.__visualizer.render()
             self.__visualizer.check()
+
+    def close(self):
+        if self.__visualizer is not None:
+            self.__visualizer.close()
 
     # private methods
     def _apply_forces(self, action: list):
@@ -147,7 +166,7 @@ class ChronoEnvironment:
         legs_hit_ground = False
         # FIXME target only the thighs of the quadrupede here, to check
         # if they touch the ground
-        for i in range(0, 4):
+        for i in range(0, len(self.__creature.motors()) // 2):
             if (
                 self.__creature.root.childs[i].body.GetContactForce().Length()
                 != 0

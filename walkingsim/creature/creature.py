@@ -97,6 +97,9 @@ class Creature:
         motors: retrieve a list of all the motors in the creature
     """
 
+    _CREATURE_HEIGHT = -1
+    _CREATURE_MOTORS = -1
+
     def __init__(
         self,
         body_cls: t.Type[_CreatureBody],

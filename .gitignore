@@ -300,3 +300,4 @@ cython_debug/
 # Misc
 examples/
 *.vim
+resources/sky_textures

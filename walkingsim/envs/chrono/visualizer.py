@@ -28,3 +28,6 @@ class ChronoVisualizer:
 
     def check(self):
         return self.__visualizer.Run()
+
+    def close(self):
+        self.__visualizer.GetDevice().closeDevice()

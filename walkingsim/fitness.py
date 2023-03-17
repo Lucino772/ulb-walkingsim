@@ -21,11 +21,15 @@ class Fitness:
     def done(self):
         return self._done
 
+    def reset(self):
+        self._props.clear()
+        self._fitness = 0
+        self._done = False
+
     def compute(
         self,
         last_observation: dict,
         observations: list,
-        step: int,
         forces: list,
         time: float,
     ):
@@ -37,7 +41,6 @@ class AliveBonusFitness(Fitness):
         self,
         last_observation: dict,
         observations: list,
-        step: int,
         forces: list,
         time: float,
     ):
@@ -77,7 +80,6 @@ class ForwardBonusFitness(Fitness):
         self,
         last_observation: dict,
         observations: list,
-        step: int,
         forces: list,
         time: float,
     ):
