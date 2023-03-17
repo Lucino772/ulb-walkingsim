@@ -13,6 +13,7 @@ Description:
 from collections import defaultdict
 
 from walkingsim.envs.chrono import ChronoEnvironment
+from walkingsim.fitness import AliveBonusFitness
 
 
 class Simulation:
@@ -26,7 +27,10 @@ class Simulation:
     def __init__(self, __env_props: dict, visualize: bool = False) -> None:
         self.__environment = ChronoEnvironment(visualize)
         self.__environment.reset(__env_props)
-        self.__is_creature_fallen = False
+        self.__fitness = AliveBonusFitness(
+            self._SIM_DURATION_IN_SECS, self._TIME_STEP
+        )
+        self.__is_done = False
         self.__current_step = 0
 
         self.__reward_props = defaultdict(float)
@@ -54,39 +58,17 @@ class Simulation:
             return 0
 
         last_observations = observations[-1]
-
-        # If the trunk touches the ground, alive_bonus is negative and stops sim
-        if (
-            not last_observations["trunk_hit_ground"]
-            and not last_observations["legs_hit_ground"]
-        ):
-            self.__reward_props["alive_bonus"] += 0.5
-        else:
-            self.__reward_props["alive_bonus"] -= 0.5
-            self.__is_creature_fallen = True
-
-        # Penalties for discouraging the joints to be stuck at their limit
-        #  self.__reward_props["joints_at_limits"] += (-0.01 * last_observations["joints_at_limits"])
-
-        # Values like the distance and speed will simply replace the one from
-        # the previous observations instead of being added. The reward is then
-        # calculated by adding all the values from the __reward_props attribute.
-        # Other value like the height diff and walk_straight also follow the same
-        # logic.
-        #  self.__reward_props["distance"] += last_observations["distance"]
-        self.__reward_props["speed"] += (
-            last_observations["distance"] / self.__environment.time
+        self.__fitness.compute(
+            last_observations,
+            observations,
+            self.__current_step,
+            forces,
+            self.__environment.time,
         )
-        self.__reward_props["height_diff"] += 0.1 * (
-            (last_observations["position"][1] - observations[0]["position"][1])
-        )
-        #  self.__reward_props["walk_straight"] = -3 * (
-        #      last_observations["position"][2] ** 2
-        #  )
-
-        self.__reward_props["forces"] = -0.2 * abs((sum(forces)))
-
-        return sum(self.__reward_props.values())
+        self.__reward_props.clear()
+        self.__reward_props.update(self.__fitness.props)
+        self.__is_done = self.__fitness.done
+        return self.__fitness.fitness
 
     def _is_time_limit_reached(self):
         return self.__environment.time > self._SIM_DURATION_IN_SECS
@@ -95,7 +77,7 @@ class Simulation:
         """This function returns wether or not the simulation is done"""
         is_over = False
 
-        if self._is_time_limit_reached() or self.__is_creature_fallen:
+        if self._is_time_limit_reached() or self.__is_done:
             is_over = True
 
         return is_over
