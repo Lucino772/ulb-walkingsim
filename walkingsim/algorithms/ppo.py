@@ -1,4 +1,5 @@
 import gymnasium as gym
+import numpy
 from gymnasium.envs.registration import EnvSpec
 from stable_baselines3 import PPO
 
@@ -76,4 +77,5 @@ class PPO_Algo:
         obs = vec_env.reset()
         while not vec_env.env_method("is_closed")[0]:
             action, _state = self._model.predict(obs, deterministic=True)
+            action = numpy.clip(action, -1, 1)
             obs, reward, done, info = vec_env.step(action)
