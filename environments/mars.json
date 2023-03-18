@@ -1,4 +1,8 @@
 {
     "description": "This environment represents Mars",
-    "gravity": [0, -3.721, 0]
+    "gravity": [0, -3.721, 0],
+    "textures": {
+        "ground": "./resources/materials/floor/mars_rocks.jpg",
+        "skybox": "./resources/materials/skybox/orange_sky2/"
+    }
 }

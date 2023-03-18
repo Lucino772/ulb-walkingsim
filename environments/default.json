@@ -1,4 +1,8 @@
 {
     "description": "This environment represents the Earth",
-    "gravity": [0, -9.81, 0]
+    "gravity": [0, -9.81, 0],
+    "textures": {
+        "ground": "./resources/materials/floor/concrete.jpg",
+        "skybox": "./resources/materials/skybox/default/"
+    }
 }

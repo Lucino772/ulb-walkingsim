@@ -193,7 +193,7 @@ class GeneticAlgorithm:
     ):
         dm = DataManager(cls._dm_group, date, False)
         if date is None:
-            best_sim_date = dm.load_global_dat_file("best_sim.dat")
+            best_sim_date = dm.load_global_dat_file("last_sim.dat")
             dm = DataManager(cls._dm_group, best_sim_date, False)
 
         sim_data = dm.load_local_dat_file("sim_data.dat")

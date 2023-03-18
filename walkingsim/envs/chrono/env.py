@@ -30,6 +30,7 @@ class ChronoEnvironment:
 
         self.__visualize = visualize
         self.__visualizer = None
+        self.__properties = None
 
         # Materials & Colors
         self.__ground_material = chrono.ChMaterialSurfaceNSC()
@@ -58,6 +59,8 @@ class ChronoEnvironment:
         return False
 
     def reset(self, properties: dict):
+        self.__properties = properties
+
         self.__environment.Clear()
         self.__environment.SetChTime(0)  # NOTE: Is this necessary ?
         self.__observations.clear()
@@ -82,11 +85,13 @@ class ChronoEnvironment:
         ground.SetBodyFixed(True)
         ground.SetPos(chrono.ChVectorD(0, -ground_size[1] / 2, 0))
         ground.GetVisualShape(0).SetColor(self.__ground_color)
-        ground.GetVisualShape(0).SetTexture(
-            "resources/materials/floor/dirty_concrete.jpg",
-            scale_x=10,
-            scale_y=10,
-        )
+        ground_texture = properties.get("textures", {}).get("ground", None)
+        if ground_texture is not None:
+            ground.GetVisualShape(0).SetTexture(
+                ground_texture,
+                scale_x=100,
+                scale_y=100,
+            )
         self.__environment.Add(ground)
 
         # Add creature
@@ -111,7 +116,9 @@ class ChronoEnvironment:
 
     def render(self):
         if self.__visualize and self.__visualizer is None:
-            self.__visualizer = ChronoVisualizer(self.__environment)
+            self.__visualizer = ChronoVisualizer(
+                self.__environment, self.__properties
+            )
             self.__visualizer.setup()
 
         if self.__visualizer is not None:
