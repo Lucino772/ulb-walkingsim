@@ -1,27 +1,14 @@
-import pickle
-import sys
+def visualize_ga(*, date: str = None, delay: int = 0):
+    from walkingsim.algorithms.ga import GeneticAlgorithm
 
-import numpy as np
-from loguru import logger
-
-
-class GA_Vis:
-    def __init__(self, date: str, ending_delay: int) -> None:
-        from walkingsim.algorithms.ga import GeneticAlgorithm
-
-        self._model = GeneticAlgorithm.load(
-            date, visualize=True, ending_delay=ending_delay
-        )
-
-    def run(self):
-        self._model.visualize()
+    model = GeneticAlgorithm.load(
+        date=date, visualize=True, ending_delay=delay
+    )
+    model.visualize()
 
 
-class GYM_Vis:
-    def __init__(self, date: str):
-        from walkingsim.algorithms.ppo import PPO_Algo
+def visualize_ppo(*, date: str, delay: int = 0):
+    from walkingsim.algorithms.ppo import PPO_Algo
 
-        self.algo = PPO_Algo.load(date, True)
-
-    def run(self):
-        self.algo.visualize()
+    model = PPO_Algo.load(date=date, visualize=True)
+    model.visualize()

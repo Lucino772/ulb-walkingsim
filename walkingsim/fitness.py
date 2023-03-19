@@ -1,4 +1,4 @@
-from collections import defaultdict
+import typing as t
 
 
 class Fitness:
@@ -40,7 +40,7 @@ class Fitness:
         raise NotImplementedError
 
 
-class AliveBonusFitness(Fitness):
+class WalkingFitnessV0(Fitness):
     @property
     def props_range(self):
         return {
@@ -88,7 +88,7 @@ class AliveBonusFitness(Fitness):
         self._fitness = sum(self._props.values())
 
 
-class ForwardBonusFitness(Fitness):
+class WalkingFitnessV1(Fitness):
     @property
     def props_range(self):
         return {
@@ -134,3 +134,9 @@ class ForwardBonusFitness(Fitness):
         )
         self._props["walk_straight"] = -abs(last_observation["position"][2])
         self._fitness = sum(self._props.values())
+
+
+fitnesses: t.Mapping[str, Fitness] = {
+    "walking-v0": WalkingFitnessV0,
+    "walking-v1": WalkingFitnessV1,
+}

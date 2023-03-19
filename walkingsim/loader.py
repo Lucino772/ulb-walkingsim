@@ -28,6 +28,15 @@ class EnvironmentProps:
     def __init__(self, __datapath: str):
         self.__datapath = __datapath
 
+    def list(self):
+        """List all the available environments"""
+        return {
+            os.path.basename(file): self.load(os.path.splitext(file)[0]).get(
+                "description", None
+            )
+            for file in os.listdir(self.__datapath)
+        }
+
     def load(self, __env: str):
         """
         Loads an environment from a JSON file.

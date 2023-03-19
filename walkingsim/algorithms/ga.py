@@ -23,6 +23,7 @@ class GeneticAlgorithm:
         config: PygadConfig,
         env_props: dict,
         creature: str = "quadrupede",
+        fitness: str = "walking-v0",
         visualize: bool = False,
         ending_delay: int = 0,
         best_solution=None,
@@ -39,6 +40,7 @@ class GeneticAlgorithm:
         self._simulation = GA_Simulation(
             env_props=self._env_props,
             creature=creature,
+            fitness=fitness,
             visualize=self._visualize,
             ending_delay=ending_delay,
         )

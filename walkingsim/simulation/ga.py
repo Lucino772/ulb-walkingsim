@@ -6,13 +6,21 @@ class GA_Simulation(BaseSimulation):
         self,
         env_props: dict,
         creature: str = "quadrupede",
+        fitness: str = "walking-v0",
         visualize: bool = False,
         timestep: float = 1e-2,
         duration: float = 5,
         ending_delay: float = 0,
     ) -> None:
         super().__init__(
-            env_props, creature, visualize, 1, timestep, duration, ending_delay
+            env_props,
+            creature,
+            fitness,
+            visualize,
+            1,
+            timestep,
+            duration,
+            ending_delay,
         )
 
     @property

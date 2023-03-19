@@ -15,6 +15,7 @@ class PPO_Algo:
         config: BaselinesConfig,
         env_props: dict,
         creature: str = "quadrupede",
+        fitness: str = "walking-v0",
         visualize: bool = False,
         model: PPO = None,
     ) -> None:
@@ -34,6 +35,7 @@ class PPO_Algo:
             env_props=env_props,
             creature=creature,
             visualize=visualize,
+            fitness=fitness,
         )
         if model is None:
             self._model = PPO("MultiInputPolicy", self._env, verbose=1)

@@ -1,5 +1,5 @@
 from walkingsim.envs.chrono import ChronoEnvironment
-from walkingsim.fitness import AliveBonusFitness
+from walkingsim.fitness import fitnesses
 
 
 class BaseSimulation:
@@ -7,6 +7,7 @@ class BaseSimulation:
         self,
         env_props: dict,
         creature: str = "quadrupede",
+        fitness: str = "walking-v0",
         visualize: bool = False,
         gain: float = 1,
         timestep: float = 1e-2,
@@ -23,7 +24,12 @@ class BaseSimulation:
         self._duration = duration
         self._ending_delay = ending_delay
 
-        self._fitness = AliveBonusFitness(self._duration, self._timestep)
+        fitness_cls = fitnesses.get(fitness, None)
+        if fitness_cls is None:
+            raise RuntimeError(
+                f"Fitness `{fitness}` is invalid, possible values are `{fitnesses.keys()}`"
+            )
+        self._fitness = fitness_cls(self._duration, self._timestep)
 
     @property
     def creature_shape(self):
