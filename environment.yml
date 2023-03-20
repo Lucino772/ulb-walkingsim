@@ -11,6 +11,7 @@ dependencies:
   - pychrono=7.0
   - loguru=0.6
   - pytorch
+  - mkl
   - stable-baselines3=1.5 
   - gymnasium=0.27.1
   - tqdm=4.65.0
@@ -20,3 +21,5 @@ dependencies:
     - pygad==2.19.1
     - black~=22.12
     - isort~=5.11
+    - git+https://github.com/DLR-RM/stable-baselines3@feat/gymnasium-support
+    - git+https://github.com/Stable-Baselines-Team/stable-baselines3-contrib@feat/gymnasium-support
