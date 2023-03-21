@@ -1,0 +1,2 @@
+initial_population,population_size,num_generations,num_parents_mating,mutation_percent_genes,parent_selection_type,keep_elitism,crossover_type,mutation_type,parallel_processing,save_solutions,gene_space,init_range_low,init_range_high,random_mutation_min_val,random_mutation_max_val,num_joints
+,10,10,4,"(60, 10)",tournament,5,uniform,adaptive,,False,"{'low': -1000, 'high': 1000, 'step': 0.1}",-1000,1000,-1000,1000,8

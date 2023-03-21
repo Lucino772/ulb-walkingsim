@@ -4,10 +4,18 @@ def train_ga(
     env: dict,
     visualize: bool = False,
     population_size: int,
-    num_generations: int
+    num_generations: int,
 ):
+    # XXX DEBUG: initial pop test
+    import pickle
+
     from walkingsim.algorithms.ga import GeneticAlgorithm
     from walkingsim.utils.pygad_config import PygadConfig
+
+    filepath = "solutions/ga/20230320-112956/sim_data.dat"
+    with open(filepath, "rb") as fp:
+        test_initial_pop = pickle.load(fp)["best_solution"]
+        print(f"the init pop is {test_initial_pop}")
 
     config = PygadConfig(
         num_generations=num_generations,
@@ -22,10 +30,11 @@ def train_ga(
         population_size=population_size,
         num_joints=8,  # FIXME: Load this from the creature
         save_solutions=False,
-        init_range_low=-1500,
-        init_range_high=1500,
-        random_mutation_min_val=-1500,
-        random_mutation_max_val=1500,
+        gene_space={"low": -1000, "high": 1000, "step": 0.1},
+        init_range_low=-1000,
+        init_range_high=1000,
+        random_mutation_min_val=-1000,
+        random_mutation_max_val=1000,
     )
     model = GeneticAlgorithm(
         config=config,

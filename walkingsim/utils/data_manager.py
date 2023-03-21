@@ -21,9 +21,6 @@ class DataManager:
         self.__data_dir = os.path.join(self.__root_dir, date)
         self.__log_dir = os.path.join(self.__data_dir, "logs")
 
-        if fail_if_exists:
-            self._create_data_dir()
-
     @property
     def date(self):
         return self.__date
@@ -42,6 +39,12 @@ class DataManager:
         else:
             os.mkdir(self.__log_dir)
 
+    def _ensure_data_dir(self):
+        if os.path.exists(self.__data_dir):
+            return
+
+        self._create_data_dir()
+
     # path
     def get_local_path(self, filename: str):
         return os.path.join(self.__data_dir, filename)
@@ -51,18 +54,21 @@ class DataManager:
 
     # save
     def save_local_dat_file(self, filename: str, obj):
+        self._ensure_data_dir()
         filepath = self.get_local_path(filename)
         with open(filepath, "wb") as fp:
             pickle.dump(obj, fp)
             logger.info(f"Saved {obj} in {filepath}")
 
     def save_global_dat_file(self, filename: str, obj):
+        self._ensure_data_dir()
         filepath = self.get_global_path(filename)
         with open(filepath, "wb") as fp:
             pickle.dump(obj, fp)
             logger.info(f"Saved {obj} in {filepath}")
 
     def save_log_file(self, filename: str, headers, data):
+        self._ensure_data_dir()
         file_path = os.path.join(self.__log_dir, filename)
         with open(file_path, "a", newline="") as csvfile:
             fieldnames = headers

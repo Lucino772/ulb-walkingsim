@@ -8,8 +8,8 @@ class GA_Simulation(BaseSimulation):
         creature: str = "quadrupede",
         fitness: str = "walking-v0",
         visualize: bool = False,
-        timestep: float = 1e-2,
-        duration: float = 5,
+        timestep: float = 5e-3,
+        duration: float = 10,
         ending_delay: float = 0,
     ) -> None:
         super().__init__(

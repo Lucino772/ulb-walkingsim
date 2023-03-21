@@ -110,6 +110,11 @@ class ChronoCreatureBody(_CreatureBody):
             _motor_frame = chrono.ChFrameD(joint_pos)
             self._motor.Initialize(self._parent.body, self._body, _motor_frame)
 
+        if motor == "angle":
+            self._motor = chrono.ChLinkMotorRotationAngle()
+            _motor_frame = chrono.ChFrameD(joint_pos)
+            self._motor.Initialize(self._parent.body, self._body, _motor_frame)
+
         if constraints_z is not None:
             self._link = chrono.ChLinkLockRevolute()
             self._link.GetLimit_Rz().SetActive(True)

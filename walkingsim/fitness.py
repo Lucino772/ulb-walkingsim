@@ -48,6 +48,7 @@ class WalkingFitnessV0(Fitness):
             "speed": (-500, 500),
             "height_diff": (-100, 100),
             "forces": (-5000, 5000),
+            "distance": (-1000, 1000),
         }
 
     def compute(
@@ -80,6 +81,7 @@ class WalkingFitnessV0(Fitness):
         self._props["height_diff"] += 0.1 * (
             (last_observation["position"][1] - observations[0]["position"][1])
         )
+        self._props["distance"] += last_observation["distance"] // 2
         #  self._props["walk_straight"] = -3 * (
         #      last_observation["position"][2] ** 2
         #  )

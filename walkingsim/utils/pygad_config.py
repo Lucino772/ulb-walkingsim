@@ -17,6 +17,7 @@ class PygadConfig(NamedTuple):
     parallel_processing: bool
     save_solutions: bool
     # Search space
+    gene_space: dict
     init_range_low: int
     init_range_high: int
     random_mutation_min_val: int
