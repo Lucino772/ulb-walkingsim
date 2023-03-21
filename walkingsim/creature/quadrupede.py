@@ -50,7 +50,7 @@ class Quadrupede(Creature):
                 )  # bottom leg
                 .join(
                     relpos=(0, 0.7 / 2, 0),
-                    constraints_z=[-0.05, math.pi / 2],
+                    constraints_z=[-0.5 if x < 0 else -0.1, math.pi / 2],
                     motor="torque",
                 )
                 .branch(size=(0.4, 0.1, 0.4), relpos=(0, -0.4, 0))  # foot

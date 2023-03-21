@@ -127,7 +127,7 @@ class ChronoCreatureBody(_CreatureBody):
             )
 
         # If no link was set yet, use a fix link
-        if self._link is None:
+        if self._link is None and self._motor is None:
             self._link = chrono.ChLinkLockLock()
             self._link.Initialize(
                 self._parent.body,

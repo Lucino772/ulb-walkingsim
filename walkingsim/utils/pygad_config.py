@@ -24,3 +24,5 @@ class PygadConfig(NamedTuple):
     random_mutation_max_val: int
     # Creature
     num_joints: int
+    # Timesteps
+    timesteps: int

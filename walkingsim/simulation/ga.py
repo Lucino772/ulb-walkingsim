@@ -17,7 +17,7 @@ class GA_Simulation(BaseSimulation):
             creature,
             fitness,
             visualize,
-            1,
+            1000,
             timestep,
             duration,
             ending_delay,

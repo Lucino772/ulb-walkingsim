@@ -65,6 +65,21 @@ class WalkingSimArgumentParser:
             choices=self.available_algorithms,
             help="The algorithm to use to train the model",
         )
+        general_options.add_argument(
+            "--timestep",
+            dest="timestep",
+            default=1e-2,
+            type=float,
+            help="The duration of a timestep",
+        )
+        general_options.add_argument(
+            "--duration",
+            "-d",
+            dest="duration",
+            default=5,
+            type=int,
+            help="The maximum duration of a single simulation",
+        )
         render_group = general_options.add_mutually_exclusive_group()
         render_group.add_argument(
             "--render",
@@ -94,6 +109,13 @@ class WalkingSimArgumentParser:
             dest="population",
             type=int,
             help="Size of population",
+        )
+        ga_algo_options.add_argument(
+            "--cycle-timesteps",
+            dest="cycle_timesteps",
+            type=int,
+            default=500,
+            help="Number of timesteps per cycle",
         )
 
         # RL Algorithm Options
@@ -129,6 +151,13 @@ class WalkingSimArgumentParser:
             default="ga",
             choices=self.available_algorithms,
             help="The algorithm to visualize",
+        )
+        general_options.add_argument(
+            "--timestep",
+            dest="timestep",
+            default=1e-2,
+            type=float,
+            help="The duration of a timestep",
         )
         general_options.add_argument(
             "--delay",
@@ -167,6 +196,9 @@ class WalkingSimArgumentParser:
                 creature=self.ns.creature,
                 env=self.ns.env,
                 visualize=self.ns.render,
+                timestep=self.ns.timestep,
+                duration=self.ns.duration,
+                timesteps=self.ns.cycle_timesteps,
                 population_size=self.ns.population,
                 num_generations=self.ns.generations,
             )
@@ -180,14 +212,24 @@ class WalkingSimArgumentParser:
                 creature=self.ns.creature,
                 env=self.ns.env,
                 visualize=self.ns.render,
+                duration=self.ns.duration,
+                timestep=self.ns.timestep,
                 timesteps=self.ns.timesteps,
             )
 
     def handle_visualize(self):
         if self.ns.algorithm == "ga":
-            visualize_ga(date=self.ns.date, delay=self.ns.delay)
+            visualize_ga(
+                date=self.ns.date,
+                timestep=self.ns.timestep,
+                delay=self.ns.delay,
+            )
         elif self.ns.algorithm == "ppo":
-            visualize_ppo(date=self.ns.date, delay=self.ns.delay)
+            visualize_ppo(
+                date=self.ns.date,
+                timestep=self.ns.timestep,
+                delay=self.ns.delay,
+            )
 
     def handle_env(self):
         if self.ns.env_command == "list":

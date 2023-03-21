@@ -25,7 +25,9 @@ class GeneticAlgorithm:
         creature: str = "quadrupede",
         fitness: str = "walking-v0",
         visualize: bool = False,
+        duration: int = 5,
         ending_delay: int = 0,
+        timestep: float = 1e-2,
         best_solution=None,
     ):
         self._dm = DataManager(self._dm_group)
@@ -40,6 +42,8 @@ class GeneticAlgorithm:
             fitness=fitness,
             visualize=self._visualize,
             ending_delay=ending_delay,
+            timestep=timestep,
+            duration=duration,
         )
 
         self.sim_data = {
@@ -56,8 +60,7 @@ class GeneticAlgorithm:
             initial_population=config.initial_population,
             sol_per_pop=config.population_size,
             num_generations=config.num_generations,
-            num_genes=self._simulation.creature_shape
-            * self._simulation.genome_discrete_intervals,
+            num_genes=self._simulation.creature_shape * config.timesteps,
             # Evolution settings
             num_parents_mating=config.num_parents_mating,
             mutation_percent_genes=config.mutation_percent_genes,
@@ -137,7 +140,7 @@ class GeneticAlgorithm:
 
         forces_list = np.array(individual).reshape(
             (
-                self._simulation.genome_discrete_intervals,
+                self.sim_data["config"].timesteps,
                 self._simulation.creature_shape,
             )
         )
@@ -192,7 +195,11 @@ class GeneticAlgorithm:
 
     @classmethod
     def load(
-        cls, date: str = None, visualize: bool = False, ending_delay: int = 0
+        cls,
+        date: str = None,
+        visualize: bool = False,
+        timestep: float = 1e-2,
+        ending_delay: int = 0,
     ):
         dm = DataManager(cls._dm_group, date, False)
         if date is None:
@@ -206,6 +213,7 @@ class GeneticAlgorithm:
             creature=sim_data["creature"],
             visualize=visualize,
             ending_delay=ending_delay,
+            timestep=timestep,
             best_solution=sim_data["best_solution"],
         )
 
@@ -229,7 +237,7 @@ class GeneticAlgorithm:
     def visualize(self):
         forces_list = np.array(self.sim_data["best_solution"]).reshape(
             (
-                self._simulation.genome_discrete_intervals,
+                self.sim_data["config"].timesteps,
                 self._simulation.creature_shape,
             )
         )
