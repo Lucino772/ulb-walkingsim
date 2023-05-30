@@ -1,3 +1,4 @@
+import copy
 import gymnasium as gym
 import numpy
 from gymnasium.envs.registration import EnvSpec
@@ -74,9 +75,24 @@ class PPO_Algo:
         )
 
     # train & visualize
+    def callback(self, *args):
+        fitness = args[0]['rewards'][0]
+        fitness_props = {
+            key: value[0][0]
+            for key, value in args[0]['new_obs'].items()
+        }
+
+        # Add entry in csv log
+        headers = ["total_fitness"] + list(
+            fitness_props.keys()
+        )
+        data = copy.copy(fitness_props)
+        data["total_fitness"] = fitness
+        self._dm.save_log_file("results.csv", headers, data)
+
     def train(self):
         self._model.learn(
-            self._config.timesteps, progress_bar=self._config.show_progress
+            self._config.timesteps, progress_bar=self._config.show_progress, callback=self.callback
         )
 
     def visualize(self):

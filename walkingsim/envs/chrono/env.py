@@ -4,6 +4,7 @@ import pychrono as chrono
 
 from walkingsim.creature.bipede import Bipede
 from walkingsim.creature.quadrupede import Quadrupede
+from walkingsim.creature.godzilla import Godzilla
 from walkingsim.envs.chrono.creature import ChronoCreatureBody
 from walkingsim.envs.chrono.utils import _tuple_to_chrono_vector
 from walkingsim.envs.chrono.visualizer import ChronoVisualizer
@@ -23,6 +24,8 @@ class ChronoEnvironment:
         self.__environment = chrono.ChSystemNSC()
         if creature == "quadrupede":
             self.__creature_cls = Quadrupede
+        elif creature == "godzilla":
+            self.__creature_cls = Godzilla
         else:
             self.__creature_cls = Bipede
 
@@ -173,12 +176,12 @@ class ChronoEnvironment:
         legs_hit_ground = False
         # FIXME target only the thighs of the quadrupede here, to check
         # if they touch the ground
-        for i in range(0, len(self.__creature.motors()) // 2):
-            if (
-                self.__creature.root.childs[i].body.GetContactForce().Length()
-                != 0
-            ):
-                legs_hit_ground = True
+        # for i in range(0, len(self.__creature.motors()) // 2):
+        #     if (
+        #         self.__creature.root.childs[i].body.GetContactForce().Length()
+        #         != 0
+        #     ):
+        #         legs_hit_ground = True
 
         # Get position and rotation of trunk
         trunk_pos = self.__creature.root.body.GetPos()
